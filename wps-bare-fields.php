@@ -34,6 +34,12 @@ add_action("admin_head", function () {
   AdminHelper::injectStyleFile(WPS_BARE_FIELDS_PLUGIN_DIR.'assets/fields.css');
 });
 
+// Wait for all plugins to be loaded before loading bare field app
+add_action('plugins_loaded', function () {
+  if ( defined("WPS_BARE_FIELDS_NANO_APP_PATH") )
+    Nano\core\Loader::loadFunctions( WPS_BARE_FIELDS_NANO_APP_PATH );
+}, 999);
+
 // Include required files that manage internal features
 require_once __DIR__."/inc/multilang.php";
 require_once __DIR__."/inc/orderable.php";
