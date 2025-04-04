@@ -9,7 +9,7 @@ jQuery(function ($) {
 	// In listing, we simply follow the links
 	if ( isListing ) return
 	const localeKeys = Object.keys(locales)
-	const localeSelector = document.getElementById("BareFields_localeSelector")
+	const localeSelector = document.querySelector(".BareFields_localeSelector")
 	// Target links on locale selector
   const localeLinks = [...localeSelector.querySelectorAll("a")]
 	barefieldsConfig.setErrorsOnLocale = function (locale, totalErrors = 0) {
@@ -31,38 +31,54 @@ jQuery(function ($) {
 			document.body.classList.toggle(`BareFields_body__${locale}`, locale === newLocale)
 		})
   }
-	// Listen to locale links on locale selector
-	// Bypass original href change and update in js runtime instead
-  localeLinks.forEach( link => {
-    const locale = link.dataset.locale
-    link.addEventListener("click", event => {
-			event.preventDefault()
-			if ( locale !== barefieldsConfig.currentLocale ) {
-      	selectLocale(locale)
-				const href = event.target.getAttribute('href')
-				// Fetch href silently to save the new selected locale in session
-				fetch( href )
-			}
-    })
-  })
+	function registerLocaleSelectorLinks ( localeLinks ) {
+		// Listen to locale links on locale selector
+		// Bypass original href change and update in js runtime instead
+		localeLinks.forEach( link => {
+			const locale = link.dataset.locale
+			link.addEventListener("click", event => {
+				event.preventDefault()
+				if ( locale !== barefieldsConfig.currentLocale ) {
+					selectLocale(locale)
+					const href = event.target.getAttribute('href')
+					// Fetch href silently to save the new selected locale in session
+					fetch( href )
+				}
+			})
+		})
+	}
+	registerLocaleSelectorLinks( localeLinks )
 	// Select next locale when clicking on locale marker
-	$(document).on('click', ".BareFields_locale", function() {
-		// todo : faire en sorte que ça switch que fr / en et pas all ici
-		const newLocale = $(this).text().toLowerCase()
-		const { currentLocale } = barefieldsConfig
-		if ( localeKeys.indexOf(newLocale) === -1 ) {
-			console.error(`Invalid locale ${newLocale}`)
-			return null
+	let clonedLocaleSelector
+	let cloneFinished = false
+	const $document = $(document)
+	function removeClonedLocaleSelector () {
+		if ( !clonedLocaleSelector ) return
+		clonedLocaleSelector.remove()
+		clonedLocaleSelector = null
+	}
+	$document.on("keyup", event => {
+		if ( event.originalEvent.key === "Escape" && clonedLocaleSelector ) {
+			event.preventDefault()
+			removeClonedLocaleSelector()
 		}
-		if ( currentLocale === "all" ) {
-			selectLocale(newLocale)
-		} else if ( localeKeys.indexOf("all") !== -1 ) {
-			selectLocale("all")
-		} else {
-			const index = localeKeys.indexOf( currentLocale ) + 1
-			const newIndex = index >= localeKeys.length ? 0 : index
-			selectLocale(localeKeys[newIndex])
-		}
+	})
+	$document.on("click", () => {
+		if ( !cloneFinished ) return
+		removeClonedLocaleSelector()
+	})
+	$document.on('click', ".BareFields_locale", function(event) {
+		cloneFinished = false
+		removeClonedLocaleSelector();
+		const { pageX, pageY } = event.originalEvent;
+		clonedLocaleSelector = localeSelector.cloneNode(true)
+		clonedLocaleSelector.style.position = "fixed";
+		clonedLocaleSelector.style.left = pageX + "px";
+		clonedLocaleSelector.style.top = pageY + "px";
+		clonedLocaleSelector.style.zIndex = 9999;
+		document.body.appendChild( clonedLocaleSelector )
+		registerLocaleSelectorLinks([...clonedLocaleSelector.querySelectorAll("a")])
+		setTimeout( () => { cloneFinished = true }, 100)
 	})
 })
 

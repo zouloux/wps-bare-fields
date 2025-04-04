@@ -124,7 +124,7 @@ add_action("admin_head", function () {
   echo "</style>";
   // Generate HTML for selector in menu bar
   $selectorHTML = [
-    '<div id="BareFields_localeSelector">',
+    '<div class="BareFields_localeSelector">',
     ...array_map(
       fn( $l ) => '<a href="'.esc_url(add_query_arg('setAdminLocale', $l)).'" data-locale="'.$l.'" class="'.($l === $currentLocale ? "selected" : "").'">'.$locales[$l].'<span></span></a>',
       $localesKeys,

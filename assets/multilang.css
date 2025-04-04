@@ -7,29 +7,31 @@ html {
 #wp-admin-bar-localeSelector:hover > .ab-item {
 	background-color: transparent !important;
 }
-#BareFields_localeSelector {
+.BareFields_localeSelector {
 	display: flex;
 	border-radius: 4px !important;
 	overflow: hidden;
 	background-color: rgba(255, 255, 255, .15);
 }
-#BareFields_localeSelector > a {
+.BareFields_localeSelector > a {
 	display: block;
 	padding: 8px 5px;
 	color: white;
 	border-right: 1px solid #777 !important;
+	text-decoration: none;
+	background-color: black;
 }
-#BareFields_localeSelector > a.selected {
+.BareFields_localeSelector > a.selected {
 	background-color: #0a7aff !important;
 	color: white;
 }
-#BareFields_localeSelector > a:last-child {
+.BareFields_localeSelector > a:last-child {
 	border-right: none !important;
 }
-#BareFields_localeSelector > a:not(.selected):not(.errored):hover {
+.BareFields_localeSelector > a:not(.selected):not(.errored):hover {
 	background-color: #666 !important;
 }
-#BareFields_localeSelector > a.errored {
+.BareFields_localeSelector > a.errored {
 	color: white;
 	font-weight: bold;
 	animation: BareFields_localeSelector__errorPulsate 2s infinite;
