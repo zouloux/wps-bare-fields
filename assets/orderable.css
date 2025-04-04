@@ -1,0 +1,30 @@
+.BareFields_orderHandle {
+	cursor: grab;
+	font-size: 18px;
+	padding: 6px 3px 5px 3px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px 0;
+}
+.BareFields_orderHandle:active {
+	cursor: grabbing;
+}
+.BareFields_orderHandle span {
+	width: 12px;
+	border-top: 1px solid #333;
+}
+.BareFields_sortablePlaceholder {
+	background: transparent;
+	border: 0;
+	height: 60px;
+	display: table;
+	width: 100%;
+}
+tbody tr.ui-sortable-helper {
+	display: table;
+	width: 100%;
+	opacity: 0.8;
+}
+.column-order {
+	width: 18px;
+}

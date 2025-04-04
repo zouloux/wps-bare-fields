@@ -1,0 +1,308 @@
+
+/* --- CLEAN / CLEAN GROUPS --- */
+/**
+ * TODO : Doc
+ * Classes wrappers :
+ * - clean
+ * - noLabel
+ * - cleanGroup
+ */
+
+/* Patch ACF groups rendering */
+.inside.acf-fields > .acf-field.acf-field-group,
+.acf-field.clean {
+  padding: 0 !important;
+  margin-top: -3px; /* FIXME to test everywhere */
+}
+.acf-field.clean:before {
+  display: none !important;
+}
+.acf-field.clean > .acf-input {
+  width: calc(100% - 2px) !important;
+  padding: 0 !important;
+}
+.acf-field.clean > .acf-input > * > .acf-actions > .button-primary {
+  margin: 3px 10px 10px 0;
+}
+.inside.acf-fields > .acf-field.acf-field-group > .acf-label,
+  /*.acf-field.clean > .acf-label {*/
+  /*  display: none;*/
+  /*}*/
+.acf-field.clean > .acf-label {
+  margin: 0 !important;
+  padding: 0 !important;
+  clear: both;
+  float: none;
+  width: 100% !important;
+}
+.acf-field.clean > .acf-label > * {
+  display: none;
+}
+.acf-field.clean > .acf-label > p.description {
+  display: block;
+  padding-left: 11px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #ccc;
+  margin: -1px 0 0 0 !important;
+}
+.inside.acf-fields > .acf-field.acf-field-group > .acf-input > *,
+.acf-field.clean > .acf-input > *,
+.acf-field.cleanGroup > .acf-input > *,
+.acf-field.clean > .acf-input .wp-editor-container,
+.acf-field.cleanGroup > .acf-input .wp-editor-container {
+  border: 0;
+}
+
+.acf-field.cleanGroup {
+  /*padding: 0 !important;*/
+}
+.acf-field.cleanGroup > .acf-input {
+  padding: 0 !important;
+}
+.acf-field.cleanGroup > .acf-input > .acf-fields {
+  background: none !important;
+  margin-top: -16px;
+}
+
+
+/* No label on field */
+.acf-field.noLabel:before {
+  display: none !important;
+}
+/*.acf-field.noLabel > .acf-label {*/
+/*  display: none;*/
+/*}*/
+.acf-field.noLabel > .acf-label > label {
+  transform: translate(0, -5px);
+}
+.acf-field.noLabel > .acf-input {
+  width: 100% !important;
+}
+
+/* Clean row repeater with column on first line */
+.acf-fields.-left > .acf-field.columns-group.clean {
+  padding: 0 !important;
+}
+.acf-fields .columns-group.clean:before {
+  display: none;
+}
+.acf-fields.-left > .acf-field.columns-group.clean > .acf-input {
+  width: 100%;
+  padding: 0 !important;
+}
+
+/* --- PATCH POST EDIT --- */
+#edit-slug-box {
+  padding: 0;
+}
+
+/* --- BETTER ACCORDIONS --- */
+
+/* More distinguishable accordions */
+.acf-accordion {
+  --accordion-color-1: rgb(231 251 231);
+  --accordion-color-2: rgb(208 247 208);
+  --accordion-color-3: rgb(160 240 160);
+}
+.acf-accordion .acf-accordion-title {
+  background-color: var(--accordion-color-1);
+  display: flex;
+  justify-content: center;
+  flex-direction: row-reverse;
+  align-items: center;
+  height: 28px;
+}
+.acf-accordion .acf-accordion-content {
+  border: 3px solid var(--accordion-color-1);
+}
+.acf-accordion .acf-accordion-title > label:after {
+  content: attr(data-my-var);
+  margin-left: 5px;
+  opacity: .5;
+  display: inline-block;
+}
+.acf-accordion > .acf-accordion-title:hover {
+  background-color: var(--accordion-color-2);
+}
+.acf-accordion > .acf-accordion-title:hover + .acf-accordion-content {
+  border-color: var(--accordion-color-2);
+}
+.acf-accordion.-open > .acf-accordion-title {
+  background-color: var(--accordion-color-3);
+}
+.acf-accordion.-open > .acf-accordion-title + .acf-accordion-content {
+  border-color: var(--accordion-color-3);
+}
+.acf-accordion > .acf-accordion-title .acf-accordion-icon {
+  float: none;
+}
+.acf-accordion .acf-accordion-title label {
+  cursor: pointer;
+}
+
+/* Sub accordions have another color */
+.acf-accordion .acf-accordion {
+  --accordion-color-1: rgb(187, 255, 248);
+  --accordion-color-2: rgb(115, 245, 245);
+  --accordion-color-3: rgb(86, 215, 220);
+}
+
+
+/* --- CONDITIONAL FIELDS --- */
+/* Conditional group container */
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer {}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer > .acf-input > .acf-fields {
+  border: 0;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer > .acf-input > .acf-fields > .acf-field {
+  padding-top: 0;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer > .acf-input > .acf-fields > .acf-field:first-child {
+  padding-bottom: 8px;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer:not(.tabMode) > .acf-input > .acf-fields > .acf-field:first-child .acf-button-group > label {
+  border-color: #008dd4;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer > .acf-input > .acf-fields > .acf-field > .acf-input {
+  padding-left: 0;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer > .acf-input > .acf-fields > .acf-field:first-child .acf-button-group > label.selected {
+  position: relative;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroupContainer:not(.tabMode) > .acf-input > .acf-fields > .acf-field:first-child .acf-button-group > label.selected:before {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: #008dd4;
+  border: 0;
+  transform: translate(-50%, 0) rotate(45deg);
+}
+.firstIsEmpty label.selected:first-child:before {
+  display: none !important;
+}
+/* Conditional group */
+.acf-fields.-left > .acf-field-group.conditionalGroup {
+  padding: 3px;
+  padding-top: 0;
+  background-color: #008dd4;
+  position: relative;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup:before {
+  position: absolute;
+  background: #008dd4;
+  border: 0;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup > .acf-label {
+  /*display: none;*/
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup > .acf-input {
+  width: 100%;
+  padding: 0;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup > .acf-input > .acf-fields {
+  border: 0;
+}
+/* tab mode */
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0;
+  padding-right: 4px;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode:before {
+  display: none;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode > .acf-input {
+  margin-top: -13px !important;
+  z-index: 2;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode > .acf-input > * {
+  border: 1px solid #999;
+}
+
+
+
+/* Colored Enabled fields */
+.BareFields__enabledField .acf-button-group .selected:first-child {
+  background: rgba(150, 20, 10)
+}
+.BareFields__enabledField .acf-button-group .selected:last-child {
+  background: rgba(50, 180, 20)
+}
+
+/* Enabled fields are moved into the flexible and root groups title bar */
+.postbox > .acf-fields > .acf-field > .acf-input > .acf-fields > .acf-field.BareFields__enabledField,
+.layout > .acf-fields > .acf-field.BareFields__enabledField {
+  position: absolute;
+  top: -45px;
+  right: 100px;
+  display: flex;
+}
+.postbox > .acf-fields > .acf-field > .acf-input > .acf-fields > .acf-field.BareFields__enabledField {
+  top: -45px;
+}
+.postbox > .acf-fields > .acf-field > .acf-input > .acf-fields > .acf-field.BareFields__enabledField:before,
+.layout > .acf-fields > .acf-field.BareFields__enabledField:before {
+  display: none !important;
+}
+.postbox > .acf-fields > .acf-field > .acf-input > .acf-fields > .acf-field.BareFields__enabledField .acf-label,
+.layout > .acf-fields > .acf-field.BareFields__enabledField .acf-label {
+  white-space: nowrap;
+  float: none !important;
+  width: auto !important;
+  display: none;
+}
+.postbox > .acf-fields > .acf-field > .acf-input > .acf-fields > .acf-field.BareFields__enabledField .acf-button-group,
+.layout > .acf-fields > .acf-field.BareFields__enabledField .acf-button-group {
+  height: 22px;
+}
+.postbox > .acf-fields > .acf-field > .acf-input > .acf-fields > .acf-field.BareFields__enabledField .acf-button-group > label,
+.layout > .acf-fields > .acf-field.BareFields__enabledField .acf-button-group > label {
+  padding: 1px 6px;
+}
+
+
+/* AdminFields::createInfo */
+.acf-field-message.clean p {
+  padding: 0 20px;
+}
+.acf-field-message.adminTitle {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  background: #ddd;
+}
+
+
+/* AdminFields::createFlexibleSeparatorLayout() - Separator in flexible tooltip */
+.acf-tooltip a[data-layout^="--"] {
+  pointer-events: none;
+  color: transparent;
+  margin-bottom: 10px;
+  height: 1px;
+  padding-top: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, .2);
+}
+
+/* More visible flexible content title */
+.acf-postbox.seamless .postbox-header {
+  border-bottom: none;
+}
+.acf-postbox.seamless .handle-actions {
+  display: none;
+}
+.acf-field-flexible-content > .acf-label {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  user-select: none;
+}
+.acf-field-flexible-content {
+  background: rgba(80, 150, 200, .2);
+  border-radius: 5px;
+}

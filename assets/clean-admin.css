@@ -1,0 +1,166 @@
+
+/* --- CONTENT --- */
+
+/* Patch content */
+#wpcontent {
+  margin-left: 200px;
+  margin-top: 20px;
+}
+
+/* --- FOOTER --- */
+
+#wpfooter {
+  display: none;
+}
+
+/* --- TOP MENU BAR --- */
+
+/* Cleaner top menu bar */
+#wpadminbar {
+	height: 52px;
+}
+#wpadminbar #wp-admin-bar-root-default > li > *,
+#wpadminbar #wp-admin-bar-top-secondary > li > * {
+	padding: 10px 15px;
+}
+/* FIXME ??
+#wp-admin-bar-new-content {
+ display: none;
+}
+#wp-admin-bar-wpseo-menu {
+  display: none;
+}
+*/
+
+/* Top buttons */
+#wpadminbar .open-analytics-top-button > a:before {
+  display: block;
+  content: "\f226";
+  top: 2px;
+}
+#wpadminbar .clear-cache-top-button > a:before {
+  display: block;
+  content: "\f182";
+  top: 2px;
+}
+#wpadminbar #wp-admin-bar-top-env-banner:hover > .ab-item {
+	background-color: transparent !important;
+}
+#wpadminbar #wp-admin-bar-top-env-banner > .ab-item > div {
+	padding: 0 20px;
+	border-radius: 4px;
+	font-weight: bold;
+	color: white;
+}
+
+
+
+/* Better admin bar */
+#wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
+  transform: scale(2.1);
+  margin-left: 20px;
+  border: 0;
+  border-radius: 50%;
+  margin-right: 9px;
+}
+
+/* --- SIDEBAR --- */
+
+#collapse-menu {
+	display: none;
+}
+
+/* Remove sub-menu for top left shortcut */
+#wp-admin-bar-site-name .ab-sub-wrapper {
+	display: none !important;
+}
+
+/* No sub-menu on hover */
+.wp-not-current-submenu > ul.wp-submenu {
+	display: none;
+}
+
+/* Cleaner sidebar menu */
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu,
+#adminmenu .wp-submenu {
+	width: 200px;
+}
+#adminmenu .wp-submenu {
+	left: 200px;
+}
+
+/* TODO : Improve mobile */
+@media (max-width: 960px)
+{
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu,
+	#adminmenu li.menu-top,
+	#adminmenu .wp-submenu {
+		width: 50px !important;
+	}
+	#adminmenu .wp-submenu {
+		left: 50px !important;
+	}
+}
+#adminmenu li a {
+	padding: 8px !important;
+}
+#adminmenu li.menu-top:not(.wp-menu-open) > a.menu-top:hover,
+#adminmenu li.menu-top.opensub > a.menu-top {
+	background-color: #152530;
+}
+#adminmenu li.menu-top > a.menu-top {
+	color: white !important;
+}
+#adminmenu {
+	/*margin: 0;*/
+}
+#adminmenuwrap,
+#adminmenu,
+#adminmenuback {
+	background-color: #304050;
+}
+#adminmenuwrap {
+	border-top: 1px solid rgba(255, 255, 255, .3);
+}
+#adminmenu .wp-menu-separator {
+	margin: 8px !important;
+	border-top: 1px solid rgba(255, 255, 255, .3);
+}
+/* TODO : Patch collapse */
+/*#collapse-menu {
+  display: none;
+}*/
+/* FIXME ??
+#toplevel_page_wpseo_dashboard .update-plugins {
+  display: none;
+}*/
+
+
+/* Post listing columns */
+.column-href {
+	width: 200px;
+}
+.column-template {
+	width: 160px;
+}
+
+/* Better post date */
+#misc-publishing-actions #timestamp {
+	font-size: 0;
+}
+#misc-publishing-actions #timestamp b {
+	font-size: 13px;
+	margin-right: 4px;
+	margin-left: 3px;
+}
+
+/* Hide post order */
+/* todo : to a feature flag ? */
+#pageparentdiv .menu-order-label-wrapper,
+#pageparentdiv #menu_order {
+	display: none;
+}

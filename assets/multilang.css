@@ -1,0 +1,214 @@
+html {
+	/* TODO : Une couleur par langue ? */
+	--bare-fields-translated-color: rgb(214, 105, 255);
+}
+
+/* Locale selector in menu bar */
+#wp-admin-bar-localeSelector:hover > .ab-item {
+	background-color: transparent !important;
+}
+#BareFields_localeSelector {
+	display: flex;
+	border-radius: 4px !important;
+	overflow: hidden;
+	background-color: rgba(255, 255, 255, .15);
+}
+#BareFields_localeSelector > a {
+	display: block;
+	padding: 8px 5px;
+	color: white;
+	border-right: 1px solid #777 !important;
+}
+#BareFields_localeSelector > a.selected {
+	background-color: #0a7aff !important;
+	color: white;
+}
+#BareFields_localeSelector > a:last-child {
+	border-right: none !important;
+}
+#BareFields_localeSelector > a:not(.selected):not(.errored):hover {
+	background-color: #666 !important;
+}
+#BareFields_localeSelector > a.errored {
+	color: white;
+	font-weight: bold;
+	animation: BareFields_localeSelector__errorPulsate 2s infinite;
+}
+@keyframes BareFields_localeSelector__errorPulsate {
+	0%, 100% {
+		background-color: darkred;
+	}
+	50% {
+		background-color: red;
+	}
+}
+
+
+/* By default, hide all translated fields. PHP injects CSS that show them with the locale selector */
+.BareFields_body__all .BareFields_translatedGroup .BareFields_translatedField {
+	display: block;
+}
+.BareFields_translatedGroup .BareFields_translatedField {
+	display: none;
+}
+.BareFields_translatedGroup > .acf-input > .acf-fields {
+	display: flex !important;
+	align-items: stretch;
+	width: 100%;
+	justify-content: stretch;
+}
+.BareFields_translatedGroup > .acf-input > .acf-fields > * {
+	flex-grow: 1;
+}
+
+/* Translated fields in translated fields are forbidden */
+/* TODO : To test */
+.BareFields_translatedGroup .BareFields_translatedField .BareFields_translatedGroup .BareFields_translatedField {
+	border: 10px dashed red !important;
+}
+
+/* Locale markers */
+.BareFields_locale {
+  font-weight: bold;
+	min-width: 18px;
+	text-transform: uppercase;
+	background-color: var(--bare-fields-translated-color);
+	color: white;
+	border-radius: 3px;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.95em;
+	padding: 1px 4px;
+	cursor: pointer;
+	margin-left: 0.3em;
+}
+.BareFields_locale__all {
+	display: none;
+}
+/* Hide in error messages */
+.acf-error-message .BareFields_locale {
+	display: none;
+}
+.BareFields_translatedField.clean:not(.inTable),
+.BareFields_translatedField.noLabel:not(.inTable) {
+	border: 2px solid var(--bare-fields-translated-color) !important;
+	margin-right: -2px;
+	position: relative;
+}
+.BareFields_translatedField.clean:not(.inTable) > .acf-label label,
+.BareFields_translatedField.noLabel:not(.inTable) > .acf-label label {
+	display: block !important;
+	font-size: 1.1em;
+	margin-top: 2px;
+	margin-left: -1px;
+}
+/* No top margin jump when changing locale */
+.BareFields_translatedField {
+	border-top: none !important;
+	margin-top: 0 !important;
+}
+
+/* Translated field in a table */
+.BareFields_translatedField.inBlockTable:before {
+  display: none !important;
+}
+.BareFields_translatedField.inBlockTable {
+  padding: 8px 0 !important;
+}
+.BareFields_translatedField.inBlockTable > .acf-label {
+  display: none;
+}
+.BareFields_translatedField.inBlockTable > .acf-input {
+  width: 100% !important;
+}
+
+/* Translated titles */
+.BareFields_translatedTitles {
+	margin-top: 12px;
+	display: flex;
+	gap: 12px;
+}
+.BareFields_translatedTitle {
+	display: none;
+	justify-content: stretch;
+	align-items: center;
+	width: 100%;
+}
+.BareFields_translatedTitle > span {
+	margin-bottom: 8px;
+	display: block;
+}
+.BareFields_translatedTitle .BareFields_locale {
+	color: white;
+	font-size: 0.9em;
+}
+.BareFields_body__all .BareFields_translatedTitle {
+	display: block;
+	margin-bottom: 10px;
+	flex-grow: 1;
+}
+.BareFields_translatedTitle > span {
+	font-weight: bold;
+	font-size: 1.2em;
+	white-space: nowrap;
+	width: 100px;
+	margin-bottom: 4px;
+}
+.BareFields_translatedTitle > span > span {
+	color: var(--bare-fields-translated-color);
+}
+.BareFields_translatedTitle > input {
+	padding: 3px 8px;
+	font-size: 1.7em;
+	line-height: 100%;
+	height: 1.7em;
+	width: 100%;
+	outline: none;
+	margin: 0 0 3px;
+	background-color: #fff;
+}
+
+/* Locale column in listing */
+.column-locales {
+	/* FIXME : should be auto with a min */
+	width: 150px;
+}
+.column-locales > div {
+	display: flex;
+	border: 1px solid #bbb;
+	border-radius: 6px;
+	width: fit-content;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+.column-locales > div > span {
+	padding: 0 5px;
+	border-right: 1px solid #bbb;
+}
+.column-locales > div > .noLocale {
+	font-weight: bold;
+}
+.column-locales > div > span:last-child {
+	border-right: 0;
+}
+
+
+/* Translatable rich text editor in clean */
+.acf-field-wysiwyg.BareFields_translatedField.clean {
+	position: relative;
+}
+.acf-field-wysiwyg.BareFields_translatedField.clean > .acf-input {
+	width: 100% !important;
+	margin-top: -5px;
+}
+.acf-field-wysiwyg.BareFields_translatedField.clean .acf-label > label {
+	height: 0 !important;
+	padding: 0;
+}
+.acf-field-wysiwyg.BareFields_translatedField.clean .acf-label > label > .BareFields_locale {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 2;
+}
