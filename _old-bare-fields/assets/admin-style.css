@@ -1,0 +1,565 @@
+@import "./menu.css";
+
+/* Fixed action side bar */
+/* FIXME : Info message goes behind */
+/*@media (min-width: 851px) {
+  #postbox-container-1
+  {
+    position: fixed;
+    top: 114px;
+    right: 314px;
+  }
+}*/
+
+/* Hide useless admin elements */
+/* FIXME : Screen options enabled back because admin users needs to enable excerpt meta box, etc ... */
+/*#screen-meta-links,*/
+
+/* FIXME */
+/*#preview-action {
+  display: none !important;
+}*/
+
+/* Remove arrow on submit meta box */
+/*#submitdiv > button.handlediv {*/
+/*  display: none;*/
+/*}*/
+
+
+
+
+
+
+
+
+
+
+
+
+/* Woolkit translated */
+.woolkit_translated {
+  /*color: rgba(220, 80, 80);*/
+  color: rgb(214, 105, 255);
+  font-weight: bold;
+}
+.acf-tooltip .woolkit_translated {
+  display: none;
+}
+/* Show translation language on clean wysiwyg */
+.acf-field-wysiwyg.clean .woolkit_translated {
+  position: absolute;
+  top: 10px;
+  z-index: 10;
+  right: 12px;
+  font-size: 12px;
+}
+.acf-field-wysiwyg.clean > .acf-label > label {
+  display: block !important;
+  font-size: 0;
+  height: 0;
+  margin-top: -3px;
+}
+
+/* Conditional group */
+.acf-fields.-left > .acf-field-group.conditionalGroup {
+  padding: 3px;
+  background-color: #008dd4;
+  position: relative;
+  /*overflow: visible !important;*/
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup:before {
+  position: absolute;
+  top: -10px;
+  left: 57px;
+  width: 20px;
+  height: 20px;
+  background: #008dd4;
+  border: 0;
+  transform: rotate(45deg);
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup > .acf-label {
+  display: none;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup > .acf-input {
+  width: 100%;
+  padding: 0;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup > .acf-input > .acf-fields {
+  border: 0;
+}
+/* tab mode */
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode {
+  background-color: transparent !important;
+  border: none !important;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode:before {
+  display: none;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode > .acf-input {
+  margin-top: -20px !important;
+  z-index: 2;
+}
+.acf-fields.-left > .acf-field-group.conditionalGroup.tabMode > .acf-input > * {
+  border: 1px solid #999;
+}
+
+
+/* Headless table */
+.headless-table .acf-table thead {
+  display: none;
+}
+
+/* Small image preview */
+.acf-field.medium img {
+  width: 320px;
+}
+.acf-field.smallImage img {
+  width: 200px;
+}
+.acf-field.microImage img {
+  width: 64px;
+}
+
+.acf-field.columns-group > .acf-input > .acf-fields
+{
+  display: flex;
+  justify-content: stretch;
+
+}
+.acf-field.columns-group > .acf-input > .acf-fields > .acf-field
+{
+  flex-grow: 1;
+  border: none;
+}
+.acf-field.columns-group > .acf-input > .acf-fields > .acf-field + .acf-field {
+  border-left: 1px solid #888;
+}
+
+
+
+/* Hide default title when loading, will be re-enabled by JS */
+/*.wp-heading-inline {*/
+/*  opacity: 0;*/
+/*}*/
+
+/* Patch multi-lang rendering */
+#wpm-language-switcher {
+  width: 100%;
+}
+
+/* More visible flexible content title */
+.acf-postbox.seamless .postbox-header {
+  border-bottom: none;
+}
+.acf-postbox.seamless .handle-actions {
+  display: none;
+}
+.acf-field-flexible-content > .acf-label {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  user-select: none;
+}
+.acf-field-flexible-content {
+  background: rgba(80, 150, 200, .2);
+  border-radius: 5px;
+}
+
+/* Cleaner CPT order */
+#cpto #cpt_info_box {
+  display: none;
+}
+
+
+
+
+
+/* Separator in flexible tooltip */
+.acf-tooltip a[data-layout^="--"] {
+  pointer-events: none;
+  color: transparent;
+  margin-bottom: 10px;
+  height: 1px;
+  padding-top: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, .2);
+}
+
+/* Patch folders plugin */
+#wcp-content-resize .wcp-content.ui-resizable {
+  top: 52px;
+  left: 200px;
+  transition: none;
+}
+@media (max-width: 960px) {
+  #wcp-content-resize .wcp-content.ui-resizable {
+    left: 50px;
+  }
+}
+body.wp-admin #wpcontent {
+  transition: none;
+}
+/* FIXME ??
+#media-attachment-taxonomy-filter {
+  display: none !important;
+}*/
+/* Override button colors */
+.wcp-container .plugin-button a {
+  border-color: #555;
+  background-color: #777;
+}
+.wcp-container .top-settings > .active-item,
+.wcp-container .top-settings > * > a.active-item {
+  background-color: #beebff !important;
+  color: black !important;
+}
+.wcp-container .top-settings .un-categorised-items.active-item a {
+  color: black !important;
+}
+.wcp-container .top-settings > .active-item:hover,
+.wcp-container .top-settings > * > a.active-item:hover {
+  background-color: #beebff !important;
+  color: black !important;
+}
+.wcp-container .top-settings *:hover {
+  background-color: unset;
+}
+/* Hide tray in folder sidebar */
+/* FIXME ??
+#wcp-content .wcp-hide-show-buttons {
+  display: none;
+}*/
+/* Hide folder structure on top of attachments grid */
+/* FIXME ??
+#wp-media-grid .tree-structure-content {
+  display: none !important;
+}*/
+
+
+/*#adminmenu .toplevel_page_wcp_folders_settings {*/
+/*  display: none;*/
+/*}*/
+/* Hide last separator */
+
+/* FIXME ??
+#adminmenu .menu-icon-settings + .wp-menu-separator {
+  display: none;
+}*/
+
+/* Hide folders when editing a media */
+/* FIXME ??
+.media-modal.-edit .media-frame > .media-frame-menu,
+.media-modal.-edit .media-frame > .folder-custom-menu
+{
+  display: none !important;
+}
+ */
+
+/* Clean articles columns */
+.wp-list-table .column-tags,
+/*.wp-list-table .column-author,*/
+.wp-list-table .column-wpseo-title,
+.wp-list-table .column-wpseo-metadesc,
+.wp-list-table .column-wpseo-focuskw,
+.wp-list-table .column-wpseo-links,
+.wp-list-table .column-wpseo-linked,
+.wp-list-table .column-rank_math_seo_details {
+  /*display: none; FIXME ?? */
+}
+
+/* Patch ACF date picker style */
+/* FIXME ??
+.ui-datepicker-calendar .ui-state-highlight {
+  width: auto !important;
+  height: auto !important;
+}*/
+
+/* Side bar is fixed in desktop */
+@media (min-width: 850px) {
+  .post-php #wpm-language-switcher {
+    position: fixed;
+    top: 51px;
+    left: 199px;
+    z-index: 80;
+    background: #f0f0f1;
+    height: 27px;
+    width: calc(100% - 520px) !important;
+    padding-top: 15px;
+    padding-left: 17px;
+  }
+  .post-php #wpbody-content #post-body.columns-2 #postbox-container-1 {
+    position: fixed;
+    right: 13px;
+    top: 68px;
+    margin-right: 0;
+    float: none;
+  }
+  .post-php #screen-meta {
+    margin-right: 320px;
+  }
+  .post-php #screen-meta-links {
+    right: 0;
+    z-index: 100;
+    margin-right: 320px;
+  }
+  .post-php #screen-meta,
+  .post-php #screen-meta-links {
+    position: relative;
+    top: 0;
+  }
+  body.has-wpm-plugin.post-php #screen-meta,
+  body.has-wpm-plugin.post-php #screen-meta-links {
+    top: 42px !important;
+  }
+  .post-php #message,
+  .post-php #post > .acf-notice {
+    margin-right: 300px;
+  }
+  .post-php #screen-meta-links #show-settings-link {
+    position: fixed;
+    top: 51px;
+    right: 320px;
+  }
+}
+
+/* Hide help button */
+/* FIXME ??
+#contextual-help-link-wrap {
+  display: none;
+}*/
+/* Hide help text on post attribute box */
+/* FIXME ??
+#pageparentdiv .post-attributes-help-text {
+  display: none;
+}*/
+
+/* Patch range number input width */
+.acf-range-wrap input[type=number] {
+  min-width: 4rem;
+}
+
+/* Woolkit enabled fields are moved into the flexible title bar */
+.acf-field.woolkitEnabledField {
+  position: absolute;
+  top: -45px;
+  right: 120px;
+  display: flex;
+}
+.acf-field.woolkitEnabledField:before {
+  display: none !important;
+}
+.acf-field.woolkitEnabledField .acf-label {
+  white-space: nowrap;
+  float: none !important;
+  width: auto !important;
+}
+.acf-field.woolkitEnabledField .acf-button-group {
+  height: 22px;
+}
+.acf-field.woolkitEnabledField .acf-button-group > label {
+  padding: 1px 6px;
+}
+
+
+.acf-field.woolkitEnabledFieldColored .acf-button-group .selected:first-child {
+  background: rgba(190, 20, 0)
+}
+.acf-field.woolkitEnabledFieldColored .acf-button-group .selected:last-child {
+  background: rgba(0, 200, 0)
+}
+
+/* Patch duplicate icon */
+.acf-icon.-duplicate:before {
+  top: 15%;
+  left: 13%;
+  box-shadow: none;
+  content: "\f105";
+  font-family: dashicons;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+
+
+/* Taxonomy add patched */
+.acf-taxonomy-field
+{
+  width: calc(100% - 30px);
+}
+.acf-taxonomy-field .acf-actions
+{
+  display: block !important;
+  margin: 0 !important;
+  right: -30px;
+  top: 4px;
+}
+
+/* Disable order option in right box on pages. Useless because of reorder plugin */
+/* FIXME ??
+.menu-order-label-wrapper,
+#menu_order {
+  display: none;
+}*/
+
+/* Small editor */
+.smallEditor iframe {
+  height: 100px !important;
+  min-height: 100px !important;
+}
+
+
+/* Relationship cleaners */
+.relationshipNoSearch .filter.-search,
+.relationshipNoPostStatus .filter.-post_type,
+.relationshipNoPostType .filter.-taxonomy {
+  display: none;
+}
+
+
+/* Hide update banners */
+#wpbody-content > .update-nag {
+  display: none;
+}
+
+/* Hide Policy Guide Banner */
+.notice.wp-pp-notice {
+  display: none;
+}
+
+/* GROUP COLUMNS */
+
+.acf-field-group.columns {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
+.acf-field-group.columns > .acf-label {
+  padding: 10px !important;
+  width: 100% !important;
+  background: #f1f1f1;
+  border-bottom: 1px solid #e1e1e1;
+  font-size: 14px;
+  float: none;
+  text-align: center;
+  color: black;
+  font-weight: bold;
+}
+.acf-field-group.columns.noLabel > .acf-label {
+  display: none !important;
+}
+.acf-field-group.columns:before {
+  display: none !important;
+}
+.acf-field-group.columns > .acf-input {
+  padding: 0 !important;
+  width: 100% !important;
+  float: none !important;
+}
+.acf-field-group.columns > .acf-input > .acf-fields {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  border: none !important;
+  @media ( max-width: 1024px ) {
+    flex-direction: column;
+  }
+}
+.acf-field-group.columns > .acf-input > .acf-fields > .acf-field {
+  width: 100%;
+  flex-basis: auto;
+  border-top: none !important;
+  padding: 0 !important;
+}
+.acf-field-group.columns > .acf-input > .acf-fields > .acf-field + .acf-field {
+  border-left: 1px solid #e1e1e1;
+}
+.acf-field-group.columns > .acf-input > .acf-fields > .acf-field > .acf-input > .acf-fields {
+  border: none;
+}
+.acf-field-group.columns > .acf-input > .acf-fields > .acf-field > .acf-label {
+  padding: 5px !important;
+  width: 100% !important;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e1e1e1;
+  float: none;
+  text-align: center;
+  color: black;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+/* ACF FIELD MESSAGE ( INFO ) */
+
+.acf-field-message.clean p {
+  padding: 0 20px;
+}
+.acf-field-message.adminTitle {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  background: #ddd;
+}
+
+/* ACF TEXT AREA FOR CODE */
+.acf-field.code {
+  font-family: Consolas, Monaco, monospace;
+}
+.acf-field.code textarea:focus {
+  box-shadow: none;
+}
+
+/* ACF bigger cross on nullable PostObject */
+.select2-container .select2-selection__clear {
+  line-height: 1em;
+  text-align: center;
+  font-size: 15px;
+  width: 18px;
+  height: 18px;
+  border: 1px solid grey;
+  border-radius: 4px;
+  transform: translate(-4px, 3px);
+  color: red;
+  font-weight: bold;
+}
+.select2-container .select2-selection__clear:hover {
+  background-color: #eee;
+}
+
+/* Tiny MCE */
+.acf-editor-wrap .wp-editor-tools {
+  position: absolute;
+  right: 0;
+  top: 6px;
+}
+.acf-editor-wrap .wp-editor-tools .wp-switch-editor.switch-html {
+  font-size: 0;
+}
+.acf-editor-wrap .wp-editor-tools .wp-switch-editor.switch-html:after {
+  font-size: 13px;
+  content: "HTML";
+  display: block;
+}
+.acf-editor-wrap .quicktags-toolbar {
+  /*height: 34px;*/
+  padding: 5px;
+}
+
+
+
+
+
+/* Translation */
+/*.woolkitTranslateSelector {*/
+/*  position: sticky;*/
+/*  !*border: 10px solid red !important;*!*/
+/*  top: 40px;*/
+/*  z-index: 100;*/
+/*  margin-right: 300px;*/
+/*  background-color: #f0f0f1;*/
+/*  border-bottom: 1px solid #ababab;*/
+/*  padding: 20px 0;*/
+/*}*/
+/*.translationHidden {*/
+/*  display: none;*/
+/*}*/

@@ -1,0 +1,94 @@
+
+/* --- TOP MENU BAR */
+
+/* Cleaner top menu bar */
+#wpadminbar {
+	height: 52px;
+}
+#wpadminbar #wp-admin-bar-root-default > li > *,
+#wpadminbar #wp-admin-bar-top-secondary > li > * {
+	padding: 10px 15px;
+}
+/* FIXME ??
+#wp-admin-bar-new-content {
+ display: none;
+}
+#wp-admin-bar-wpseo-menu {
+  display: none;
+}
+*/
+
+/* --- SIDEBAR */
+
+#collapse-menu {
+	display: none;
+}
+
+/* Remove sub-menu for top left shortcut */
+#wp-admin-bar-site-name .ab-sub-wrapper {
+	display: none !important;
+}
+
+/* No sub-menu on hover */
+.wp-not-current-submenu > ul.wp-submenu {
+	display: none;
+}
+
+/* Cleaner sidebar menu */
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu,
+#adminmenu .wp-submenu {
+	width: 200px;
+}
+#adminmenu .wp-submenu {
+	left: 200px;
+}
+
+/* TODO : Improve mobile */
+@media (max-width: 960px)
+{
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu,
+	#adminmenu li.menu-top,
+	#adminmenu .wp-submenu {
+		width: 50px !important;
+	}
+	#adminmenu .wp-submenu {
+		left: 50px !important;
+	}
+}
+#adminmenu li a {
+	padding: 8px !important;
+}
+#adminmenu li.menu-top:not(.wp-menu-open) > a.menu-top:hover,
+#adminmenu li.menu-top.opensub > a.menu-top {
+	background-color: #152530;
+}
+#adminmenu li.menu-top > a.menu-top {
+	color: white !important;
+}
+#adminmenu {
+	/*margin: 0;*/
+}
+#adminmenuwrap,
+#adminmenu,
+#adminmenuback {
+	background-color: #304050;
+}
+#adminmenuwrap {
+	border-top: 1px solid rgba(255, 255, 255, .3);
+}
+#adminmenu .wp-menu-separator {
+	margin: 8px !important;
+	border-top: 1px solid rgba(255, 255, 255, .3);
+}
+/* TODO : Patch collapse */
+/*#collapse-menu {
+  display: none;
+}*/
+/* FIXME ??
+#toplevel_page_wpseo_dashboard .update-plugins {
+  display: none;
+}*/
