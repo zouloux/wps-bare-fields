@@ -73,4 +73,25 @@ class CollectionBlueprint extends AbstractBlueprint
     return $this;
   }
 
+  // --------------------------------------------------------------------------- LIST COLUMN
+
+  public function listColumn ( string $columnTitle, string $width, callable $handler ) {
+    $name = $this->name;
+    $columnSlug = acf_slugify($columnTitle);
+    add_filter("admin_head", function () use ($columnSlug, $width) {
+      echo "<style>.column-".$columnSlug."{ width: $width }<style>";
+    });
+    add_filter("manage_edit-{$name}_columns", function ( $columns ) use ($columnSlug, $columnTitle) {
+      $columns[$columnSlug] = $columnTitle;
+      return $columns;
+    });
+    add_action("manage_{$name}_posts_custom_column", function ( $columnName, $postID ) use ( $columnSlug, $handler ) {
+      if ( $columnName === $columnSlug ) {
+        $return = $handler($postID);
+        if ( is_string($return) )
+          echo $return;
+      }
+    }, 10, 2);
+  }
+
 }
