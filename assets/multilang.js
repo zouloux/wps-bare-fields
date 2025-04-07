@@ -72,7 +72,7 @@ jQuery(function ($) {
 		removeClonedLocaleSelector();
 		const { pageX, pageY } = event.originalEvent;
 		clonedLocaleSelector = localeSelector.cloneNode(true)
-		clonedLocaleSelector.style.position = "fixed";
+		clonedLocaleSelector.style.position = "absolute";
 		clonedLocaleSelector.style.left = pageX + "px";
 		clonedLocaleSelector.style.top = pageY + "px";
 		clonedLocaleSelector.style.zIndex = 9999;
