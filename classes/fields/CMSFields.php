@@ -14,7 +14,7 @@ use Extended\ACF\Fields\Textarea;
 class CMSFields
 {
   public static function filterShareImage ( $fields ) {
-    if ( $fields["shareImage"] )
+    if ( isset( $fields["shareImage"]->href ) )
       $fields["shareImage"] = $fields["shareImage"]->href;
     return $fields;
   }
