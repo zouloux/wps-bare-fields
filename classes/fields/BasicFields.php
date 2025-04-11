@@ -28,6 +28,12 @@ class BasicFields
       ->wrapper($styled ? ["class" => "BareFields__enabledField"] : []);
   }
 
+  public static function createEnabledCompact ( $title = "Enabled", $default = "1", $choices = [ "0", "1" ], $key = "enabled", bool $styled = true ) {
+    return ButtonGroup::make($title, $key)
+      ->choices( $choices )->default( $default )
+      ->wrapper($styled ? ["class" => "BareFields__enabledField"] : []);
+  }
+
   // todo : with recursive filter that converts to a real boolean
   public static function createBoolean ( string $title, string $key, bool $checked = false ) {
     return ButtonGroup::make($title, $key)
