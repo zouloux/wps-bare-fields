@@ -27,6 +27,13 @@ class CachedDocumentRequest {
     });
   }
 
+	public static function getTimezoneOffset () {
+		return Cache::define("misc_timezoneOffset", function () {
+      Loader::loadWordpress();
+			return get_option('gmt_offset') * HOUR_IN_SECONDS;
+    });
+	}
+
   // --------------------------------------------------------------------------- SITEMAP
 
   public static function getSitemaps ( string $absoluteBase, array $postTypes ) {

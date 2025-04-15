@@ -262,4 +262,35 @@ class DocumentRequest {
 		return $wpdb->get_results( $sql );
 	}
 
+  // --------------------------------------------------------------------------- PUBLISH SCHEDULED POSTS
+
+	/**
+	 * Publish scheduled posts that are now in a past date.
+	 * Call this in a cron to publish scheduled posts.
+	 * @param array $postTypes post types to publish
+	 * @return int Will return the number of published posts. The cache should be cleared if > 0.
+	 */
+	static function publishScheduledPosts ( array $postTypes = ["post", "page"] ) {
+		$timezoneOffset = get_option('gmt_offset') * HOUR_IN_SECONDS;
+		$query = new WP_Query([
+			'post_type' => $postTypes,
+			'post_status' => 'future',
+			'date_query' => [
+				[
+					'before' => gmdate('Y-m-d H:i:s', time() + $timezoneOffset),
+					'inclusive' => true
+				]
+			]
+		]);
+		$total = 0;
+		while ( $query->have_posts() ) {
+			++$total;
+			$query->the_post();
+			$postID = get_the_ID();
+			wp_publish_post( $postID );
+		}
+		wp_reset_postdata();
+		return $total;
+	}
+
 }
