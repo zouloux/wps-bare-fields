@@ -167,6 +167,13 @@ add_filter('acf/validate_value', function( $valid, $value, $field ) {
 		}
 	}
   $selectedLocales = get_field('locales', $postID) ?? null;
+	if ( empty($selectedLocales) ) {
+		$adminLocale = Locales::readAdminLocale();
+		if ( $adminLocale === "all" )
+			$selectedLocales = [ ...Locales::getLocalesKeys() ];
+		else
+			$selectedLocales = [ $adminLocale ];
+	}
   if ( !is_array($selectedLocales) || empty($selectedLocales) )
     return $valid;
   if ( !is_array($field) )
