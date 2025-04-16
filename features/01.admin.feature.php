@@ -544,3 +544,7 @@ function bare_fields_feature_enable_slug_column () {
 	});
 }
 
+// Hide update banner
+function bare_fields_hide_update_banner () {
+	add_filter( 'pre_site_transient_update_core', '__return_null' );
+}
