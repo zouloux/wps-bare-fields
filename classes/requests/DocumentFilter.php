@@ -20,6 +20,8 @@ class DocumentFilter
 
   const string HIDDEN_MARKER = "__##";
 
+  const string BOOLEAN_FIELD_MARKER = "__@@";
+
 	/**
 	 * Patch all "${screenName}___${fieldName}" to "$fieldName"
 	 */
@@ -147,6 +149,13 @@ class DocumentFilter
 			// Remove messages, sub-titles, accordions ...
 			if ( str_ends_with($key, self::HIDDEN_MARKER) ) {
 				unset( $data[$key] );
+				continue;
+			}
+			// Convert booleans
+			if ( str_ends_with( $key, self::BOOLEAN_FIELD_MARKER ) ) {
+				$newKey = substr( $key, 0, -strlen( self::BOOLEAN_FIELD_MARKER ) );
+				$data[$newKey] = WPSHelper::booleanInput( $node );
+				unset( $data[ $key ] );
 				continue;
 			}
       // Remove !enabled fields

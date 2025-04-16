@@ -2,6 +2,7 @@
 
 namespace BareFields\fields;
 
+use BareFields\requests\DocumentFilter;
 use Extended\ACF\Fields\ButtonGroup;
 use Extended\ACF\Fields\Image;
 use Extended\ACF\Fields\PageLink;
@@ -34,13 +35,12 @@ class BasicFields
       ->wrapper($styled ? ["class" => "BareFields__enabledField"] : []);
   }
 
-  // todo : with recursive filter that converts to a real boolean
-  public static function createBoolean ( string $title, string $key, bool $checked = false ) {
-    return ButtonGroup::make($title, $key)
+	public static function createBoolean ( string $title, string $key, bool $checked = false, array $values = ["No", "Yes"] ) {
+    return ButtonGroup::make($title, $key.DocumentFilter::BOOLEAN_FIELD_MARKER)
       ->default( $checked ? "true" : "false" )
       ->choices([
-        "false" => "No",
-        "true" => "Yes",
+        "false" => $values[0],
+        "true" => $values[1],
       ]);
   }
 
