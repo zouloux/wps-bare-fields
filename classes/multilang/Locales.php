@@ -25,7 +25,7 @@ class Locales {
 	}
 
   public static function isMultilang () : bool {
-    return count(self::getLocalesKeys()) > 1;
+    return count(self::getLocalesKeys()) > 0;
   }
 
 	// --------------------------------------------------------------------------- CURRENT LOCALE
