@@ -11,7 +11,7 @@ jQuery(function ($) {
 	const localeKeys = Object.keys(locales)
 	const localeSelector = document.querySelector(".BareFields_localeSelector")
 	// Target links on locale selector
-  const localeLinks = [...localeSelector.querySelectorAll("a")]
+  const localeLinks = localeSelector ? [...localeSelector.querySelectorAll("a")] : []
 	barefieldsConfig.setErrorsOnLocale = function (locale, totalErrors = 0) {
 		localeLinks.forEach( link => {
 			if ( locale !== link.dataset.locale ) return
@@ -69,6 +69,7 @@ jQuery(function ($) {
 	})
 	$document.on('click', ".BareFields_locale", function(event) {
 		cloneFinished = false
+		if ( !localeSelector ) return
 		removeClonedLocaleSelector();
 		const { pageX, pageY } = event.originalEvent;
 		clonedLocaleSelector = localeSelector.cloneNode(true)

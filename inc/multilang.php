@@ -122,22 +122,24 @@ add_action("admin_head", function () {
     echo "}";
   }
   echo "</style>";
-  // Generate HTML for selector in menu bar
-  $selectorHTML = [
-    '<div class="BareFields_localeSelector">',
-    ...array_map(
-      fn( $l ) => '<a href="'.esc_url(add_query_arg('setAdminLocale', $l)).'" data-locale="'.$l.'" class="'.($l === $currentLocale ? "selected" : "").'">'.$locales[$l].'<span></span></a>',
-      $localesKeys,
-    ),
-    '</div>',
-  ];
-  add_action('admin_bar_menu', function ( WP_Admin_Bar $adminBar ) use ( $selectorHTML ) {
-    $adminBar->add_node([
-      'id' => 'localeSelector',
-      'title' => implode("", $selectorHTML),
-      'parent' => 'top-secondary'
-    ]);
-  }, 2);
+	if ( count(Locales::getLocalesKeys()) > 1 ) {
+		// Generate HTML for selector in menu bar
+		$selectorHTML = [
+			'<div class="BareFields_localeSelector">',
+			...array_map(
+				fn( $l ) => '<a href="'.esc_url(add_query_arg('setAdminLocale', $l)).'" data-locale="'.$l.'" class="'.($l === $currentLocale ? "selected" : "").'">'.$locales[$l].'<span></span></a>',
+				$localesKeys,
+			),
+			'</div>',
+		];
+		add_action('admin_bar_menu', function ( WP_Admin_Bar $adminBar ) use ( $selectorHTML ) {
+			$adminBar->add_node([
+				'id' => 'localeSelector',
+				'title' => implode("", $selectorHTML),
+				'parent' => 'top-secondary'
+			]);
+		}, 2);
+	}
   // Inject locale info in JS
   $api = [
     "locales" => $locales,
@@ -221,6 +223,7 @@ add_action('acf/load_field/key=locales', function( $field ) {
 // Add meta box to select locales in blueprints that are multilang
 add_action( 'init', function () {
 	if ( !Locales::isMultilang() ) return;
+	if ( count(Locales::getLocalesKeys()) <= 1 ) return;
 	// Get multilang blueprints but do not show the meta box on blueprints
 	// that have all locales forced
   $blueprints = BlueprintsManager::getMultilangBlueprints( true );
@@ -353,6 +356,8 @@ add_action("wp_after_insert_post", function ($postId) {
 // Add locale columns in list view of admin
 add_action( "init", function () {
 	if ( !Locales::isMultilang() ) return;
+	if ( count(Locales::getLocalesKeys()) <= 1 ) return;
+
   function inject_locales_column ( $columns ) {
     $columns["locales"] = "Locales";
     return $columns;
