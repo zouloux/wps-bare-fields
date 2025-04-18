@@ -46,7 +46,7 @@ class DocumentFilter
       fn ($b) => $b->getMultilang() && !$b->getMultilangForceAllLocales()
     );
     // Do not process post if it does not exists in current locale
-    if ( Locales::isMultilang() && $isPostMultilang ) {
+		if ( count(Locales::getLocalesKeys()) > 1 && $isPostMultilang ) {
       $locales = get_field("locales", $post->ID);
       $locale = Locales::getCurrentLocale();
       if ( !in_array($locale, $locales) )
