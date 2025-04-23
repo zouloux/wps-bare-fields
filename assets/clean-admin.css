@@ -160,7 +160,7 @@
 
 /* Hide post order */
 /* todo : to a feature flag ? */
-#pageparentdiv .menu-order-label-wrapper,
-#pageparentdiv #menu_order {
-	display: none;
-}
+/*#pageparentdiv .menu-order-label-wrapper,*/
+/*#pageparentdiv #menu_order {*/
+/*	display: none;*/
+/*}*/
