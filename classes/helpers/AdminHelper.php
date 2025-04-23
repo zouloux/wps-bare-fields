@@ -35,19 +35,38 @@ class AdminHelper
 
   public static function injectStyleFile ( string $path ) {
     $html = '<link rel="stylesheet" href="'.$path.'" />';
-    if ( current_action() === 'admin_head')
-      echo $html;
-    else
-      add_action('admin_head', function () use ($html) { echo $html; } );
+    self::injectResource($html, "header");
   }
 
+	public static function injectInlineStyle ( mixed $style ) {
+		if ( is_array($style) )
+			$style = implode("\n", $style);
+    self::injectResource('<style>'.$style.'</style>', "header");
+	}
+
   public static function injectScriptFile ( string $path ) {
-    $html = '<script src="'.$path.'"></script>';
-    if ( current_action() === 'admin_head')
-      echo $html;
-    else
-      add_action('admin_footer', function () use ($html) { echo $html; });
+    self::injectResource('<script src="'.$path.'"></script>', "footer");
   }
+
+	public static function injectInlineScript ( mixed $script ) {
+		if ( is_array($script) )
+			$script = implode("\n", $script);
+		self::injectResource('<script>'.$script.'</script>', "footer");
+	}
+
+	public static function injectResource ( string $html, string $location ) {
+		if ( $location === "header" )
+			$location = "admin_head";
+		else
+			$location = "admin_footer";
+    if ( current_action() === $location ) {
+      echo $html;
+			exit;
+		}
+		add_action($location, function () use ($html) {
+			echo $html;
+		});
+	}
 
   // --------------------------------------------------------------------------- EDITOR & EXCERPT
 
@@ -106,7 +125,7 @@ class AdminHelper
     };
   }
 
-  public static function removeDashboardMenu ( string $redirectURL = null ) {
+  public static function removeDashboardMenu ( ?string $redirectURL = null ) {
     $redirectURL ??= admin_url('edit.php?post_type=page');
     add_action('admin_menu', fn () => remove_menu_page('index.php') );
     add_action( 'admin_init', function () use ( $redirectURL ) {

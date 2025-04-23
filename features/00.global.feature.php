@@ -223,9 +223,25 @@ function bare_fields_feature_global_disable_nested_pages () {
 	//	add_action( 'init', function () {
 	//		remove_post_type_support('page','page-attributes');
 	//	});
-	add_action( 'admin_init', function () {
-		$style = "#pageparentdiv .inside .parent-id-label-wrapper, #parent_id { display: none; }";
-		AdminHelper::injectCustomAdminResourceForScreen(null, $style, "");
+	AdminHelper::injectInlineStyle(
+		"#pageparentdiv .inside .parent-id-label-wrapper, #parent_id { display: none; }"
+	);
+}
+
+function bare_fields_feature_global_disable_pages ( string $redirectURL = "" ) {
+	// Remove from menu with CSS, because we cannot remove with regular PHP function ( php warnings )
+	AdminHelper::injectInlineStyle("#menu-pages { display: none; }");
+	add_action("admin_init", function () use ( $redirectURL ) {
+		global $pagenow;
+		$postType = $_GET["post_type"] ?? "";
+		if (
+			$postType === "page" && (
+				$pagenow === "edit.php" || $pagenow === "post-new.php"
+			)
+		) {
+			wp_redirect( $redirectURL );
+			exit;
+		}
 	});
 }
 
@@ -241,7 +257,9 @@ function bare_fields_feature_global_disable_nested_pages () {
  * Will also remove "posts" from menu
  * @return void
  */
-function bare_fields_feature_global_disable_news () {
+function bare_fields_feature_global_disable_news ( string $redirectURL = "" ) {
+	// Remove from menu with CSS, because we cannot remove with regular PHP function ( php warnings )
+	AdminHelper::injectInlineStyle("#menu-posts { display: none; }");
 	add_action('admin_init', function () {
 		global $pagenow;
 		$postType = $_GET['post_type'] ?? '';
@@ -262,11 +280,6 @@ function bare_fields_feature_global_disable_news () {
 			wp_redirect(admin_url());
 			exit;
 		}
-	});
-	// Remove from menu with CSS, because we cannot remove with regular PHP function
-	add_action( 'admin_init', function () {
-		$style = "#menu-posts { display: none; }";
-		AdminHelper::injectCustomAdminResourceForScreen(null, $style, "");
 	});
 	// Remove admin bar shortcut
 	add_action('wp_before_admin_bar_render', function () {
@@ -324,7 +337,7 @@ function bare_fields_feature_global_set_permalink_structure ( $structure = '/%po
  * 			Also remove checkbox in admin
  * @return void
  */
-function bare_fields_feature_global_disable_indexing ( $allowIndexing = "auto", bool $hideOptionInAdmin = true ) {
+function bare_fields_feature_global_disable_indexing ( bool|string $allowIndexing = "auto", bool $hideOptionInAdmin = true ) {
 	if ( $hideOptionInAdmin )
 		AdminHelper::injectCustomAdminResourceForScreen('options-reading', 'tr.option-site-visibility { display: none; }');
 	add_action('pre_option_blog_public', function () use ($allowIndexing) {

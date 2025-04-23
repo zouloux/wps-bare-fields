@@ -30,6 +30,7 @@ add_action('init', function () {
 	BlueprintsManager::install();
 });
 
+// todo : in bare_fields_feature_admin_inject_style_override ?
 add_action("admin_head", function () {
   AdminHelper::injectStyleFile(WPS_BARE_FIELDS_PLUGIN_DIR.'assets/fields.css');
 });

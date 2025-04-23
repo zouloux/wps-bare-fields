@@ -290,16 +290,17 @@ function bare_fields_feature_admin_disable_meta_box_draggable () {
 		global $pagenow;
 		if ( !in_array($pagenow, ['post-new.php', 'post.php', 'admin.php']) ) return;
 		// Remove original drag and drop and open / close for all meta boxes
-		$style = ".postbox .handle-order-higher, .postbox .handle-order-lower { display: none }\n";
-		//$style .= ".postbox .postbox-header .handlediv { display: none; }\n";
-		$style .= ".postbox .postbox-header .hndle { pointer-events: none; }\n";
-		// IMPORTANT NOTE : Do not use this, it will prevent usage of all "edit" buttons on admin !
-		// wp_deregister_script('postbox');
-		$script = "window._customMetaboxBehavior = true;";
+		AdminHelper::injectInlineStyle([
+			".postbox .handle-order-higher, .postbox .handle-order-lower { display: none }",
+			//".postbox .postbox-header .handlediv { display: none; }",
+			".postbox .postbox-header .hndle { pointer-events: none; }",
+		]);
 		// IMPORTANT NOTE : Do not remove this class, ACF will crashes when changing template in admin
 		// Remove hndle class will disable draggable on meta boxes
 		//$script = "jQuery(document).ready(function (\$) {\$('.postbox .postbox-header .hndle').removeClass('hndle');});";
-		AdminHelper::injectCustomAdminResourceForScreen(null, $style, $script);
+		// IMPORTANT NOTE : Do not use this, it will prevent usage of all "edit" buttons on admin !
+		// wp_deregister_script('postbox');
+//		AdminHelper::injectInlineScript("window._customMetaboxBehavior = true;");
 	});
 }
 
@@ -343,10 +344,7 @@ function bare_fields_feature_admin_enable_clean_meta_box_sidebar ( $excerptOnSid
 }
 
 function bare_fields_feature_admin_remove_visibility_in_meta_box () {
-	AdminHelper::injectCustomAdminResourceForScreen(
-		null,
-		"#visibility { display: none !important; }"
-	);
+	AdminHelper::injectInlineStyle("#visibility { display: none !important; }");
 }
 
 // ----------------------------------------------------------------------------- CLASSIC EDITOR
