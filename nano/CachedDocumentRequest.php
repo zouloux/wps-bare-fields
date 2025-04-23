@@ -118,9 +118,9 @@ class CachedDocumentRequest {
 
   // --------------------------------------------------------------------------- COLLECTIONS
 
-  public static function getCollectionDocuments ( string $collectionName, string $locale = "", int $fetchFields = 0 ) {
+  public static function getCollectionDocuments ( string $collectionName, int $fetchFields = 0, string $locale = "" ) {
     $cacheKey = "collection_{$locale}_{$fetchFields}_$collectionName";
-    return Cache::define($cacheKey, function () use ( $collectionName, $locale, $fetchFields ) {
+    return Cache::define($cacheKey, function () use ( $collectionName, $fetchFields, $locale ) {
       Loader::loadWordpress();
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
