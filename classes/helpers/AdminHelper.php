@@ -61,7 +61,7 @@ class AdminHelper
 			$location = "admin_footer";
     if ( current_action() === $location ) {
       echo $html;
-			exit;
+			return;
 		}
 		add_action($location, function () use ($html) {
 			echo $html;
