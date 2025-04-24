@@ -214,3 +214,6 @@ html {
 	right: 8px;
 	z-index: 2;
 }
+.acf-field-wysiwyg.BareFields_translatedField:not(.clean) > .acf-input > .acf-editor-wrap {
+	border: 1px solid #ccc;
+}
