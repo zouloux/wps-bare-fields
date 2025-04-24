@@ -528,7 +528,7 @@ function bare_fields_feature_enable_slug_column () {
 		$postTypes = get_post_types([ "show_ui" => true, "public" => true ]);
 		foreach ( $postTypes as $postType ) {
 			add_filter( "manage_{$postType}_posts_columns", function ( $columns ) {
-				$columns['href'] = "Slug";
+				$columns['href'] = "Url";
 				return $columns;
 			});
 			add_action( "manage_{$postType}_posts_custom_column", function ( $columnName, $postId ) {

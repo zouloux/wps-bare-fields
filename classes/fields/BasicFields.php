@@ -12,7 +12,7 @@ class BasicFields
 {
   public static function getMime ( string $type, $others = [] ) {
     if ( $type === "image" )
-      return ["jpg", "png", "jpeg", ...$others];
+      return ["jpg", "png", "jpeg", "webp", ...$others];
     if ( $type === "svg" )
       return ["svg"];
     else if ( $type === "video" )
