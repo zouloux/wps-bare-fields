@@ -10,8 +10,6 @@ use DateTime;
 use WP_Post;
 
 class Document {
-  public static bool $SERIALIZE_MODIFIED = false;
-
   // --------------------------------------------------------------------------- BASICS
 
 	protected WP_Post $_source;
@@ -93,12 +91,12 @@ class Document {
 
   public function fetchContent () {
     // TODO
-    $this->content = WoolkitFilters::filterRichContent( $this->_source->post_content );
+//    $this->content = WoolkitFilters::filterRichContent( $this->_source->post_content );
   }
 
   public function fetchExcerpt () {
     // TODO
-    $this->excerpt = WoolkitFilters::filterRichContent( $this->_source->post_excerpt );
+//    $this->excerpt = WoolkitFilters::filterRichContent( $this->_source->post_excerpt );
   }
 
   // --------------------------------------------------------------------------- THUMBNAIL
@@ -132,8 +130,9 @@ class Document {
 
   // TODO
   public function fetchTags () {
-    $tags = wp_get_post_terms( $this->id, 'post_tag', [ "fields" => "all" ] );
-		$this->tags = WoolkitRequest::filterTags( $tags );
+		throw new \Exception("Not implemented");
+//    $tags = wp_get_post_terms( $this->id, 'post_tag', [ "fields" => "all" ] );
+//		$this->tags = WoolkitRequest::filterTags( $tags );
   }
 
   // --------------------------------------------------------------------------- CATEGORIES
@@ -142,11 +141,12 @@ class Document {
 
   // TODO
   public function fetchCategories () {
-		$categoryIDS = wp_get_post_categories( $this->id );
-		$this->categories = [];
-		if ( !empty($categoryIDS) )
-			foreach ( $categoryIDS as $categoryID )
-				$this->categories[] = WoolkitRequest::getCategoryById( $categoryID );
+		throw new \Exception("Not implemented");
+//		$categoryIDS = wp_get_post_categories( $this->id );
+//		$this->categories = [];
+//		if ( !empty($categoryIDS) )
+//			foreach ( $categoryIDS as $categoryID )
+//				$this->categories[] = WoolkitRequest::getCategoryById( $categoryID );
   }
 
   // --------------------------------------------------------------------------- AUTHOR
@@ -177,7 +177,7 @@ class Document {
 
 	// --------------------------------------------------------------------------- TO ARRAY
 
-	public function jsonSerialize ():array {
+	public function jsonSerialize ( int $fetchFields = 0 ):array {
 		$json = [
 			"id"    => $this->id,
 			"href"  => $this->href,
@@ -185,23 +185,20 @@ class Document {
 			"type"  => $this->type,
 			"name"  => $this->name,
 			"date"  => $this->date->getTimestamp(),
+			// NOTE : use DocumentFilter::registerObjectSerializer to include more
 		];
-    if ( self::$SERIALIZE_MODIFIED )
-			$json["modified"] = $this->modified->getTimestamp();
 		if ( $this->parentID !== 0 )
 			$json["parent"] = $this->parentID;
 		if ( !empty($this->author) )
 			$json["author"] = $this->author;
 		if ( !empty($this->tags) )
-			$json["tags"] = DocumentFilter::recursiveSerialize( $this->tags );
+			$json["tags"] = DocumentFilter::recursiveSerialize( $this->tags, $fetchFields );
 		if ( !empty($this->categories) )
-			$json["categories"] = DocumentFilter::recursiveSerialize( $this->categories );
-		if ( !empty($this->tags) )
-			$json["tags"] = DocumentFilter::recursiveSerialize( $this->tags );
+			$json["categories"] = DocumentFilter::recursiveSerialize( $this->categories, $fetchFields );
 		if ( !empty($this->fields) )
-			$json["fields"] = DocumentFilter::recursiveSerialize( $this->fields );
+			$json["fields"] = DocumentFilter::recursiveSerialize( $this->fields, $fetchFields );
 		if ( !empty($this->locales) )
-			$json["locales"] = DocumentFilter::recursiveSerialize( $this->locales );
+			$json["locales"] = $this->locales;
 		return $json;
 	}
 }

@@ -161,7 +161,6 @@ class DocumentFilter
       // Remove !enabled fields
       if ( is_array($node) && isset($node['enabled']) && !is_array($node['enabled']) ) {
         $isEnabled = $node['enabled'];
-        // todo : Nano dependency here
         $disable = $isEnabled !== "enabled" && !($isEnabled === true || WPSHelper::booleanInput($isEnabled));
         if ( $disable ) {
 					// Check if it is an indexed array ( enabled field in a repeater )
@@ -211,16 +210,34 @@ class DocumentFilter
 
   // ---------------------------------------------------------------------------
 
-	public static function recursiveSerialize ( $object ) {
+	public static function recursiveSerialize ( mixed $object, int $fetchFields = 0 ) {
+		// --- NULL
     if ( is_null($object) )
       return null;
+		// --- ARRAY -> Recursive
 		if ( is_array($object) ) {
       return array_map(
-        fn ( $value ) => self::recursiveSerialize( $value ),
+        fn ( $value ) => self::recursiveSerialize( $value, $fetchFields ),
         $object
       );
 		}
+		// --- OBJECT -> Serialize
 		if ( is_object($object) ) {
+			// Check if we have some registered serializer
+			foreach ( self::$__objectSerializers as $serializer ) {
+				$returnedArray = $serializer( $object, $fetchFields );
+				// Null mean continue to next serializer
+				if ( is_null($returnedArray))
+					continue;
+				// False mean remove this object from the list
+				else if ( $returnedArray === false )
+					return null;
+				// Array mean it's serialized, use it and do not process next serializers
+				else if ( is_array($returnedArray) )
+					return $returnedArray;
+			}
+			// Default serializer will try to use jsonSerialize method
+			// or the default php object to array serializer if not found
 			return (
   			method_exists($object, 'jsonSerialize')
 				? $object->jsonSerialize()
@@ -228,6 +245,25 @@ class DocumentFilter
 			);
 		}
 		return $object;
+	}
+
+  // ---------------------------------------------------------------------------
+
+	protected static array $__objectSerializers = [];
+
+	/**
+	 * Filter all recursively serializable objects.
+	 * Useful to override jsonSerialize behavior on all serializable objects.
+	 *
+	 * @param callable $callback function (mixed $object, int $fetchFields = 0) {
+	 *    return false; // to consider a null (can be removed from the list if not published, for example)
+	 *    return null;  // to continue to the next or default serializer
+	 *    return array; // to use serialized and stop at this serializer
+	 * }
+	 * @return void
+	 */
+	public static function registerObjectSerializer ( callable $callback ) {
+		self::$__objectSerializers[] = $callback;
 	}
 
 }

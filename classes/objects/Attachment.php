@@ -7,6 +7,24 @@ use JsonSerializable;
 
 class Attachment implements JsonSerializable {
 
+	protected static function mimeTypeToSimpleType ( string $mimeType ) {
+		$mimes = [
+			// image
+			"image/jpeg" => "jpg",
+			"image/jpg" => "jpg",
+			"image/gif" => "gif",
+			"image/png" => "png",
+			"image/webp" => "webp",
+			"image/svg+xml" => "svg",
+			// video
+			"video/mp4" => "mp4",
+			"video/mov" => "mov",
+			// other
+			"application/zip" => "zip"
+		];
+		return $mimes[ $mimeType ] ?? $mimeType;
+	}
+
 	protected array $_source = [];
 	public function getSource ():array { return $this->_source; }
 
@@ -47,7 +65,7 @@ class Attachment implements JsonSerializable {
 			'href' => $this->href,
 			'fileName' => $this->fileName,
 			'fileSize' => $this->fileSize,
-      // todo : statics to configure
+			// NOTE : use DocumentFilter::registerObjectSerializer to include more
 //			'title' => $this->title,
 //			'alt' => $this->alt,
 //			'description' => $this->description,

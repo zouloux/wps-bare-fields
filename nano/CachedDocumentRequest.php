@@ -1,12 +1,14 @@
 <?php
 
-namespace helpers;
+namespace nano;
 
 use BareFields\multilang\Locales;
 use BareFields\requests\DocumentFilter;
 use BareFields\requests\DocumentRequest;
 use Nano\core\Loader;
 use Nano\helpers\Cache;
+use function helpers\get_option;
+use const helpers\HOUR_IN_SECONDS;
 
 
 class CachedDocumentRequest {
@@ -53,7 +55,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $document = DocumentRequest::getDocumentsByPostType( $postTypes, $fetchFields );
-      return DocumentFilter::recursiveSerialize( $document );
+      return DocumentFilter::recursiveSerialize( $document, $fetchFields );
     });
   }
 
@@ -64,7 +66,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $document = DocumentRequest::getDocumentByPath( $requestPath, $fetchFields );
-      return DocumentFilter::recursiveSerialize( $document );
+      return DocumentFilter::recursiveSerialize( $document, $fetchFields );
     });
   }
 
@@ -75,7 +77,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $document = DocumentRequest::getDocumentByID( $postID, $fetchFields );
-      return DocumentFilter::recursiveSerialize( $document );
+      return DocumentFilter::recursiveSerialize( $document, $fetchFields );
     });
   }
 
@@ -88,7 +90,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $document = DocumentRequest::getPageDocumentsByTemplateName( $name, $fetchFields );
-      return DocumentFilter::recursiveSerialize( $document );
+      return DocumentFilter::recursiveSerialize( $document, $fetchFields );
     });
   }
 
@@ -99,7 +101,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $document = DocumentRequest::getSubPagesOfPage( $postID, $fetchFields, $depth, $order );
-      return DocumentFilter::recursiveSerialize( $document );
+      return DocumentFilter::recursiveSerialize( $document, $fetchFields );
     });
   }
 
@@ -112,7 +114,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $data = DocumentRequest::getSingletonFields( $singletonName );
-      return DocumentFilter::recursiveSerialize( $data );
+      return DocumentFilter::recursiveSerialize( $data, 0 );
     });
   }
 
@@ -125,7 +127,7 @@ class CachedDocumentRequest {
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
       $data = DocumentRequest::getCollectionDocuments( $collectionName, $fetchFields );
-      return DocumentFilter::recursiveSerialize( $data );
+      return DocumentFilter::recursiveSerialize( $data, $fetchFields );
     });
   }
 }

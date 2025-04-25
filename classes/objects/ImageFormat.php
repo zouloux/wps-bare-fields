@@ -23,13 +23,12 @@ class ImageFormat implements JsonSerializable
 	}
 
 	public function jsonSerialize ():array {
-		// todo : add statics to configure this
 		return [
 			'href' => $this->href,
-//			'title' => $this->name,
 			'type' => $this->type,
 			'width' => $this->width,
 			'height' => $this->height,
+			// NOTE : use DocumentFilter::registerObjectSerializer to include more
 		];
 	}
 }

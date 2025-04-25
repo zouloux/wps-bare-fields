@@ -3,21 +3,10 @@
 namespace BareFields\objects;
 
 use BareFields\helpers\WPSHelper;
+use BareFields\requests\DocumentFilter;
 use Exception;
 
 class ImageAttachment extends Attachment {
-
-	protected static function mimeTypeToSimpleType ( string $mimeType ) {
-		$mimes = [
-			"image/jpeg" => "jpg",
-			"image/jpg" => "jpg",
-			"image/gif" => "gif",
-			"image/png" => "png",
-			"image/webp" => "webp",
-			"image/svg+xml" => "svg",
-		];
-		return $mimes[ $mimeType ] ?? "unknown";
-	}
 
 	/** @var ImageFormat[] $formats */
 	public array $formats = [];
@@ -100,7 +89,6 @@ class ImageAttachment extends Attachment {
 					$this->formats[] = new ImageFormat([
 						'name' => $key,
 						// Href already without base
-						// fixme : use WoolkitAttachment::processRelativeHref and add base if needed
 						'href' => $folderPath.'/'.$size['file'],
 						'width' => $size['width'],
 						'height' => $size['height'],
@@ -111,18 +99,17 @@ class ImageAttachment extends Attachment {
 		}
 	}
 
-	public function jsonSerialize ():array {
-		// todo : add statics to configure this
+	public function jsonSerialize ( int $fetchFields = 0 ):array {
 		$json = [
-//			'id' => $this->id,
-			//'name' => $this->name,
 			'href' => $this->href,
 			'alt' => $this->alt,
 			'type' => $this->type,
+			// NOTE : use DocumentFilter::registerObjectSerializer to include more
+//			'id' => $this->id,
+//			'name' => $this->name,
 		];
 		if ( !empty($this->formats) )
-//			$json['formats'] = array_map( fn ($format) => $format->jsonSerialize(), $this->formats );
-			$json['formats'] = $this->formats;
+			$json['formats'] = DocumentFilter::recursiveSerialize($this->formats, $fetchFields);
 		if ( !empty($this->blurhash) )
 			$json['blurhash'] = $this->blurhash;
 		if ( !empty($this->colorMain) )

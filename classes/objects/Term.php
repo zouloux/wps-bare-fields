@@ -8,8 +8,6 @@ use WP_Term;
 
 class Term implements JsonSerializable
 {
-  public static bool $SERIALIZE_HREF = false;
-
 	protected WP_Term $_source;
 	public function getSource ():WP_Term { return $this->_source; }
 
@@ -34,9 +32,9 @@ class Term implements JsonSerializable
 			"id"    => $this->id,
 			"name"  => $this->name,
 			"slug"  => $this->slug,
+      "href" => $this->href,
+			// NOTE : use DocumentFilter::registerObjectSerializer to include more
 		];
-    if ( self::$SERIALIZE_HREF )
-      $json["href"] = $this->href;
     if ( $this->parentID )
       $json["parent"] = $this->parentID;
     return $json;
