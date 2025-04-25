@@ -1,14 +1,10 @@
 <?php
 
-namespace nano;
-
 use BareFields\multilang\Locales;
 use BareFields\requests\DocumentFilter;
 use BareFields\requests\DocumentRequest;
 use Nano\core\Loader;
 use Nano\helpers\Cache;
-use function helpers\get_option;
-use const helpers\HOUR_IN_SECONDS;
 
 
 class CachedDocumentRequest {
