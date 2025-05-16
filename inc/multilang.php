@@ -88,6 +88,13 @@ add_action("admin_head", function () {
   else if ( $screen->post_type === "" ) {
 		$isListing = false;
     $blueprints = BlueprintsManager::getMatchingBlueprints("singleton", blueprintID: $screen->id);
+		// If not found with screen which can happens in option pages in sub-menus
+		// Try with old-school way of targeting
+		global $pagenow;
+		if ( empty($blueprints) && $pagenow === 'admin.php' && isset( $_GET['page'] ) ) {
+			$pageOptionName =  $_GET['post'] ?? "";
+			$blueprints = BlueprintsManager::getMatchingBlueprints("singleton", $pageOptionName);
+		}
   }
 	else {
 		$isListing = false;
