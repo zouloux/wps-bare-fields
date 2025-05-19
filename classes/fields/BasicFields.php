@@ -44,7 +44,11 @@ class BasicFields
       ]);
   }
 
-  public static function createImage ( $label = "Image", $key = "image", $imageSizeClass = "smallImage" ) {
+	// image64
+	// image128
+	// image256
+	// image320
+  public static function createImage ( $label = "Image", $key = "image", $imageSizeClass = "image128" ) {
     return Image::make($label, $key)
       ->wrapper(['class' => $imageSizeClass]);
   }
