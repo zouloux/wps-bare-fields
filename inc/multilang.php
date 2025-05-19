@@ -92,7 +92,7 @@ add_action("admin_head", function () {
 		// Try with old-school way of targeting
 		global $pagenow;
 		if ( empty($blueprints) && $pagenow === 'admin.php' && isset( $_GET['page'] ) ) {
-			$pageOptionName =  $_GET['post'] ?? "";
+			$pageOptionName =  $_GET['page'] ?? "";
 			$blueprints = BlueprintsManager::getMatchingBlueprints("singleton", $pageOptionName);
 		}
   }
