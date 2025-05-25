@@ -1,0 +1,156 @@
+
+/* BUTTONS */
+
+.button.button-important {
+	border-color: rgba(220, 0, 0);
+	background: rgba(220, 0, 0);
+	color: white;
+	&:hover {
+		background: rgba(120, 0, 0);
+		color: white;
+	}
+}
+
+.button > span.dashicons {
+	display: inline-block;
+	font-size: 18px;
+	top: 5px;
+	position: relative;
+}
+.button > span.dashicons.dashicons-plus {
+	top: 6px;
+}
+.button > span.dashicons:first-child {
+	left: -4px;
+}
+.button > span.dashicons:last-child {
+	left: 4px;
+}
+.button > span.dashicons:only-child {
+	left: 0;
+}
+
+.button.button-small > span.dashicons {
+	font-size: 16px;
+	top: 3px;
+	left: 1px;
+	position: relative;
+}
+
+
+
+/* ADMIN TABLE */
+
+.AdminTable {
+	thead {
+		th:not(:first-child) {
+			border-left: 1px solid #ccc;
+			text-align: center;
+		}
+	}
+	tbody {
+		td {
+			text-align: center;
+			&:not(:first-child) {
+				border-left: 1px solid #ccc;
+			}
+		}
+	}
+}
+
+.AdminTable_cell {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle !important;
+}
+
+.AdminTable_actions {
+	display: flex;
+	overflow: visible;
+	justify-content: flex-end;
+	gap: 8px;
+}
+.AdminTable_actions > span {
+	flex-grow: 1;
+	width: 0;
+}
+.AdminTable_actionsAlt {
+	display: flex;
+	overflow: visible;
+	justify-content: flex-start;
+	gap: 8px;
+}
+
+
+
+/* ADMIN GRID */
+
+.AdminGrid {
+	/*table-layout: fixed;*/
+	td {
+		padding: 8px 6px;
+		line-height: 2;
+	}
+	tr + tr {
+		border-top: 1px solid #eee;
+	}
+}
+
+
+/* ADMIN POST BOX */
+
+.AdminPostBoxColumns {
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+	@media (max-width: 1140px) {
+		display: block;
+	}
+}
+.AdminPostBoxColumns > * {
+	flex-basis: 50%;
+}
+
+.AdminPostBox {
+	> .AdminTable {
+		border: none;
+		/*margin-top: -36px;*/
+	}
+}
+
+.AdminPostBox_footer {
+	margin-top: 12px;
+	border-top: 1px solid #bbb;
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	margin-left: -12px;
+	margin-right: -12px;
+	padding: 12px;
+	padding-bottom: 0;
+	> span {
+		flex-grow: 1;
+	}
+}
+
+.AdminPostBox_footer__noInside {
+	margin: 0;
+	padding-bottom: 12px;
+}
+
+
+/* ADMIN PAGINATE */
+
+.AdminPaginate {
+	margin-top: 30px;
+}
+.AdminPaginate_container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 6px;
+}
+.AdminPaginate_more {
+	color: #666;
+}
