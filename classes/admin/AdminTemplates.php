@@ -20,7 +20,7 @@ class AdminTemplates
 
 	// --------------------------------------------------------------------------- RENDER VIEW
 
-	protected static Closure|null $__registeredViewHandlers = null;
+	protected static \Closure|null $__registeredViewHandlers = null;
 
 	static function renderView ( string $view, array $variables ) {
 		$path = self::$__templateRootPath . $view . ".php";
@@ -37,7 +37,7 @@ class AdminTemplates
 	}
 
 
-	static function registerView ( Closure $handler ) {
+	static function registerView ( \Closure $handler ) {
 		self::$__registeredViewHandlers = $handler;
 	}
 
