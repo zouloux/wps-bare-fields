@@ -269,7 +269,7 @@ class AdminTemplates
 			</div>
 			<?php if ( !$noInside ): ?>
 			<div class="inside">
-		<?php endif; ?>
+			<?php endif; ?>
 		<?php
 		// Close post box
 		return function ( ?callable $footer = null ) use ( $noInside ) {
@@ -281,7 +281,7 @@ class AdminTemplates
 				$footer();
 				echo "</div>";
 			}
-			if ( $noInside )
+			if ( !$noInside )
 				echo "</div>";
 			echo "</div>";
 		};
