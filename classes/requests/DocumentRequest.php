@@ -153,10 +153,14 @@ class DocumentRequest {
 		return $filtered;
   }
 
-	static function getDocumentByID ( string|int $postID, int $fetchFields = 0 ) :? Document {
+	static function getDocumentByID ( string|int $postID, int $fetchFields = 0, bool $onlyPublished = true ) :? Document {
 		$profile = self::nanoDebugProfile("DocumentRequest::getDocumentByID('$postID', $fetchFields)");
 		$post = get_post( $postID );
-		if ( is_null($post) || in_array($post->post_type, self::$__forbiddenPostTypes) )
+		if ( is_null($post) )
+			return null;
+		if ( in_array($post->post_type, self::$__forbiddenPostTypes) )
+			return null;
+		if ( $onlyPublished && $post->post_status !== "publish" )
 			return null;
 		$profile();
 		return DocumentFilter::createDocumentFromPost( $post, $fetchFields );
