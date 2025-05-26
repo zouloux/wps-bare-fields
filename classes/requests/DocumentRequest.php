@@ -156,7 +156,7 @@ class DocumentRequest {
 	static function getDocumentByID ( string|int $postID, int $fetchFields = 0 ) :? Document {
 		$profile = self::nanoDebugProfile("DocumentRequest::getDocumentByID('$postID', $fetchFields)");
 		$post = get_post( $postID );
-		if ( in_array($post->post_type, self::$__forbiddenPostTypes) )
+		if ( is_null($post) || in_array($post->post_type, self::$__forbiddenPostTypes) )
 			return null;
 		$profile();
 		return DocumentFilter::createDocumentFromPost( $post, $fetchFields );
