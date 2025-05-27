@@ -6,7 +6,6 @@ use BareFields\helpers\AdminHelper;
 
 class AdminTemplates
 {
-
 	// --------------------------------------------------------------------------- INIT
 
 	// Template root path, relative to app root.
@@ -36,7 +35,7 @@ class AdminTemplates
 		self::$__registeredViewHandlers = null;
 	}
 
-
+	// To call inside a rendered view
 	static function registerView ( \Closure $handler ) {
 		self::$__registeredViewHandlers = $handler;
 	}
@@ -172,7 +171,7 @@ class AdminTemplates
 			<?php if ( $pageIndex > 0 ) : ?>
 				<?php for ( $i = 0; $i < $totalPages; ++$i ) : ?>
 					<?php
-					$currentUrl = $_SERVER[ 'REQUEST_URI' ];
+					$currentUrl = $_SERVER["REQUEST_URI"];
 					$pageUrl = remove_query_arg('page-index', $currentUrl);
 					$pageUrl = add_query_arg('page-index', $i, $pageUrl);
 					?>
@@ -194,6 +193,14 @@ class AdminTemplates
 			</div>
 		</div>
 		<?php
+	}
+
+	static function renderPaginateAuto ( array $paginate ) {
+		self::renderPaginate(
+			$paginate["totalPages"] ?? 0,
+			$paginate["totalCount"] ?? 0,
+			$paginate["pageIndex"] ?? 0
+			);
 	}
 
 	/**
@@ -285,5 +292,86 @@ class AdminTemplates
 				echo "</div>";
 			echo "</div>";
 		};
+	}
+
+	// --------------------------------------------------------------------------- FILTER FORM
+
+	static function renderFilterForm ( callable $fields ) {
+		$page ??= $_GET["page"] ?? "";
+		?>
+		<form method="GET" style="display: flex; gap: 12px;">
+			<input type="hidden" name="page" value="<?php echo $page ?>" />
+			<?php $fields(); ?>
+			<button type="submit" class="button button-primary">
+				<span class="dashicons dashicons-search"></span>
+			</button>
+		</form>
+		<?php
+	}
+
+	static function renderSearchForm ( string $query ) {
+		self::renderFilterForm(function () use ($query) {
+			?>
+			<input
+				type="text"
+				class="regular-text"
+				name="query"
+				placeholder="Search"
+				value="<?php echo htmlentities($query) ?>"
+			/>
+			<?php
+		});
+	}
+
+	static function renderFilterSelectors ( array $filters, array $states ) {
+		self::renderFilterForm(function () use ($filters, $states) {
+			foreach ($filters as $filterKey => $values) {
+				echo '<select name="'.$filterKey.'">';
+				foreach ($values as $key => $value)
+					if ( $value === "---" )
+						echo '<option disabled>---</option>';
+					else
+						echo '<option value="'.$key.'"'.(($states[$filterKey] ?? "") === $key ? "selected" : "").'>'.$value.'</option>';
+				echo '</select>';
+			}
+		});
+	}
+
+	// --------------------------------------------------------------------------- JS
+
+	static function injectJS ( array $variables, string $apiBase = "" ) {
+		?><script>
+			const __apiBase = "<?php echo $apiBase; ?>";
+			const __variables = <?php echo json_encode($variables) ?>;
+			async function callAdminAPI ( endpoint, variables, method = "POST" ) {
+				// Inject body
+				let body
+				if ( typeof variables === "object" && !(variables instanceof FormData) ) {
+					body = new FormData()
+					Object.keys(variables).forEach(key => {
+						body.append(key, variables[key])
+					})
+				} else if ( variables instanceof FormData ) {
+					body = variables
+				}
+				try {
+					// todo : body as json
+					const url = `${__apiBase}${endpoint}`
+					const request = await fetch(url, {
+						method, body,
+						credentials: "include"
+					})
+					return await request.json();
+				}
+				catch (error) {
+					return {
+						status: "fetch-error",
+						message: error?.toString() ?? "unknown-error",
+						error
+					}
+				}
+			}
+		</script>
+		<?php
 	}
 }
