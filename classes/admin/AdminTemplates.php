@@ -354,14 +354,31 @@ class AdminTemplates
 				} else if ( variables instanceof FormData ) {
 					body = variables
 				}
+				// todo : implement body as json
 				try {
-					// todo : body as json
 					const url = `${__apiBase}${endpoint}`
 					const request = await fetch(url, {
 						method, body,
 						credentials: "include"
 					})
-					return await request.json();
+					const contentType = request.headers.get("content-type");
+					if (!contentType || !contentType.includes("application/json")) {
+						return {
+							status: "fetch-error-invalid-content-type",
+							message: error?.toString() ?? "unknown-error",
+							error
+						}
+					}
+					try {
+						return await request.json();
+					}
+					catch (error) {
+						return {
+							status: "fetch-error-invalid-json",
+							message: error?.toString() ?? "unknown-error",
+							error
+						}
+					}
 				}
 				catch (error) {
 					return {
@@ -371,6 +388,7 @@ class AdminTemplates
 					}
 				}
 			}
+
 			function errorOrReload (result) {
 				if ( typeof result !== "object" || result.status !== "success" ) {
 					console.error( result )
