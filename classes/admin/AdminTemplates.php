@@ -371,6 +371,21 @@ class AdminTemplates
 					}
 				}
 			}
+			function errorOrReload (result) {
+				if ( typeof result !== "object" || result.status !== "success" ) {
+					console.error( result )
+					let message
+					if ( typeof result === "string" )
+						message = result
+					else if ( typeof result.status === "string" )
+						message = result.status
+					else
+						message = "Unknown error:\n"+JSON.stringify(result)
+					alert( message );
+					return
+				}
+				location.reload();
+			}
 		</script>
 		<?php
 	}
