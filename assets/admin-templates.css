@@ -2,14 +2,29 @@
 /* BUTTONS */
 
 .button.button-important {
-	border-color: rgba(220, 0, 0);
-	background: rgba(220, 0, 0);
+	border-color: rgba(240, 0, 0);
+	background: rgba(200, 0, 0);
 	color: white;
-	&:hover {
-		background: rgba(120, 0, 0);
-		color: white;
-	}
 }
+.button.button-important:hover,
+.button.button-important:active {
+	border-color: rgba(255, 20, 20);
+	background: rgba(250, 0, 0);
+	color: white;
+}
+
+.button.button-validate {
+	border-color: rgba(0, 200, 0);
+	background: rgba(0, 180, 0);
+	color: white;
+}
+.button.button-validate:hover,
+.button.button-validate:active {
+	border-color: rgba(20, 200, 20);
+	background: rgba(0, 200, 0);
+	color: white;
+}
+
 
 .button > span.dashicons {
 	display: inline-block;
