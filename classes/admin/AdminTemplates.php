@@ -266,8 +266,11 @@ class AdminTemplates
 	 * @param boolean $noInside - Optional boolean to determine if the content should be wrapped in a div with class "inside"
 	 * @param array $style - Optional array for additional styles
 	 * @param boolean $alert - Optional boolean to add alert styling (orange dashed border)
-	 */
-	static function renderPostBox ( string $title, bool $noInside = false, array $style = [], bool $alert = false ) {
+	 * @param bool $insideFlex - Add vertical flex to inside
+	 * @return \Closure
+	*/
+
+	static function renderPostBox ( string $title, bool $noInside = false, array $style = [], bool $alert = false, bool $insideFlex = false ) {
 		if ( $alert ) {
 			$style = array_merge($style, [
 				'border' => '2px dashed orange',
@@ -275,13 +278,20 @@ class AdminTemplates
 			]);
 		}
 		$styleString = self::generateStyleStringFromArray($style);
+		$insideStyle = !$insideFlex ? "" : self::generateStyleStringFromArray([
+    	"height" => "calc(100% - 48px)",
+    	"display" => "flex",
+    	"flex-direction" => "column",
+    	"justify-content" => "space-between",
+    	"margin-top" => "0",
+		]);
 		?>
 		<div class="postbox AdminPostBox" <?php if ( $styleString ): ?>style="<?php echo $styleString; ?>"<?php endif; ?>>
 			<div class="postbox-header">
 				<h2><?php echo $title; ?></h2>
 			</div>
 			<?php if ( !$noInside ): ?>
-			<div class="inside">
+			<div class="inside" style="<?php echo $insideStyle ?>">
 			<?php endif; ?>
 		<?php
 		// Close post box

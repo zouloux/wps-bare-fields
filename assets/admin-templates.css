@@ -129,9 +129,20 @@
 	margin-right: -12px;
 	padding: 12px;
 	padding-bottom: 0;
-	> span {
-		flex-grow: 1;
-	}
+}
+.AdminPostBox_footer > form {
+  display: flex;
+	gap: 6px;
+	justify-content: flex-end;
+	width: 100%;
+}
+.AdminPostBox_footer > form > span {
+	flex-grow: 1;
+}
+
+.AdminPostBox_footer__noInside {
+	margin: 0;
+	padding-bottom: 12px;
 }
 
 .AdminPostBox_footer__noInside {
