@@ -1,3 +1,7 @@
+/* Patch scroll height */
+html > body {
+	height: auto !important;
+}
 
 /* --- CONTENT --- */
 
