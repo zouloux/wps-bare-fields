@@ -73,6 +73,15 @@ class AdminTemplates
 		<?php
 	}
 
+	// --------------------------------------------------------------------------- HTML HELPERS
+
+	static function generateStyleStringFromArray ( array $style ) {
+		$styleString = '';
+		foreach ( $style as $key => $value )
+			$styleString .= $key . ':' . $value . ';';
+		return $styleString;
+	}
+
 	// --------------------------------------------------------------------------- ADMIN COMPONENTS
 
 	/**
@@ -259,16 +268,13 @@ class AdminTemplates
 	 * @param boolean $alert - Optional boolean to add alert styling (orange dashed border)
 	 */
 	static function renderPostBox ( string $title, bool $noInside = false, array $style = [], bool $alert = false ) {
-		$finalStyle = $style ?: [];
 		if ( $alert ) {
-			$finalStyle = array_merge($finalStyle, [
+			$style = array_merge($style, [
 				'border' => '2px dashed orange',
 				'border-radius' => '4px'
 			]);
 		}
-		$styleString = '';
-		foreach ( $finalStyle as $key => $value )
-			$styleString .= $key . ':' . $value . ';';
+		$styleString = self::generateStyleStringFromArray($style);
 		?>
 		<div class="postbox AdminPostBox" <?php if ( $styleString ): ?>style="<?php echo $styleString; ?>"<?php endif; ?>>
 			<div class="postbox-header">
@@ -335,6 +341,21 @@ class AdminTemplates
 				echo '</select>';
 			}
 		});
+	}
+
+	// --------------------------------------------------------------------------- FLEX
+
+	static function renderFlex ( string $direction = "row", array $style = [] ) {
+		$styleString = self::generateStyleStringFromArray([
+			"display" => "flex",
+			"flex-direction" => $direction,
+			"gap" => "20px",
+			...$style,
+		]);
+		echo '<div style="'.$styleString.'">';
+		return function () {
+			echo "</div>";
+		};
 	}
 
 	// --------------------------------------------------------------------------- JS
