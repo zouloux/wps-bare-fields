@@ -393,11 +393,12 @@ class AdminTemplates
 						credentials: "include"
 					})
 					const contentType = request.headers.get("content-type");
+					console.log(contentType);
 					if (!contentType || !contentType.includes("application/json")) {
+						const content = await request.text();
 						return {
-							status: "fetch-error-invalid-content-type",
-							message: error?.toString() ?? "unknown-error",
-							error
+							status: "fetch-error-invalid-answer",
+							message: content
 						}
 					}
 					try {
