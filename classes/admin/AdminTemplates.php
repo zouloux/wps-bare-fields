@@ -22,7 +22,7 @@ class AdminTemplates
 	protected static \Closure|null $__registeredViewHandlers = null;
 
 	static function renderView ( string $view, array $variables ) {
-		$path = self::$__templateRootPath . $view . ".php";
+		$path = self::$__templateRootPath . $view . ".view.php";
 		$realPath = realpath($path);
 		$rootPath = dirname(realpath(self::$__templateRootPath));
 		if ( !file_exists($path) || !$realPath || !str_starts_with($realPath, $rootPath) )
@@ -393,7 +393,6 @@ class AdminTemplates
 						credentials: "include"
 					})
 					const contentType = request.headers.get("content-type");
-					console.log(contentType);
 					if (!contentType || !contentType.includes("application/json")) {
 						const content = await request.text();
 						return {
