@@ -86,22 +86,32 @@ class AdminTemplates
 
 	/**
 	 * Render admin page
-	 * @param string|null $backHref - URL for the back button (optional)
 	 * @param string|null $title - Title to display (optional)
 	 * @param callable|null $header - Function to render header content (optional)
 	 * @param callable|null $right - Function to render right content (optional)
+	 * @param string|null $backHref - URL for the back button, "auto" for automatic behavior, empty to disable (optional)
 	 * @return \Closure Call to close page tags
 	 */
 	static function renderAdminPage (
-		?string   $backHref, ?string $title,
-		?callable $header = null, ?callable $right = null
+		?string $title,
+		?callable $header = null, ?callable $right = null,
+		?string   $backHref = "auto",
 	) {
+		if ( $backHref === "auto" ) {
+			$page = $_GET["page"] ?? "";
+			$id = $_GET["id"] ?? "";
+			if ( empty($id) ) {
+				$backHref = "";
+			} else {
+				$backHref = "admin.php?page=$page";
+			}
+		}
 		?>
 		<div class="wrap">
 		<div style="display: flex; gap: 20px; align-items: center;">
 			<?php if ( !empty($backHref) ) : ?>
 				<a class="button button-important"
-					 href="<?php echo $backHref === "auto" ? "javascript:navigation.back()" : $backHref; ?>">
+					 href="<?php echo $backHref; ?>">
 					<span class="dashicons dashicons-arrow-left-alt2"></span><span>Back</span>
 				</a>
 			<?php endif; ?>
