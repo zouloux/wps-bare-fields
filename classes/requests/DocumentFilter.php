@@ -22,6 +22,8 @@ class DocumentFilter
 
   const string BOOLEAN_FIELD_MARKER = "__@@";
 
+  const string COMPLEX_ID_MARKER = "__%%";
+
 	/**
 	 * Patch all "${screenName}___${fieldName}" to "$fieldName"
 	 */
@@ -198,6 +200,15 @@ class DocumentFilter
 			) {
 				$data[$key] = self::createAttachement( $node );
 				continue;
+			}
+			// Replace ids
+			if (
+				is_array($node)
+				&& isset($node["id".self::COMPLEX_ID_MARKER])
+			) {
+				$id = $node["id".self::COMPLEX_ID_MARKER];
+				unset($node["id".self::COMPLEX_ID_MARKER]);
+				$node["id"] = $id;
 			}
       // Recursive
       if ( is_array($node) )
