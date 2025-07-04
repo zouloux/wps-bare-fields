@@ -65,32 +65,41 @@ class ConditionalFields
   }
 
 
-
   public static function createLink (
     string $label = "Link", string $key = "link",
     array $types = ["none", "internal", "external"],
     bool $translateText = false,
     array $internalPostTypes = ["post"],
+		bool $textOverrideMode = false,
   ) {
+		$createTextLabel = fn (bool $override, bool $required) => (
+			"Link text".($required ? " *" : ($override ? " override (will use page title if empty)" : ""))
+		);
     $fields = [];
-    $linkText = fn () => Text::make("Link text", "text")->required();
-    $translatedLinkText = fn () => (
-      $translateText ? TranslatedFields::table("Link text *", $linkText )->column(60) : $linkText()
-    );
+    $linkText = fn (bool $isInternal) => (
+			( $textOverrideMode && $isInternal )
+			? Text::make($createTextLabel(true, false), "text")
+			: Text::make($createTextLabel(false, false), "text")->required()
+		);
+    $translatedLinkText = fn (bool $isInternal) => (
+      $translateText
+			? TranslatedFields::table($createTextLabel($textOverrideMode, !$textOverrideMode), fn () => $linkText($isInternal) )->column(60)
+			: $linkText($isInternal)
+		);
     if ( in_array("none", $types) )
       $fields["None"] = [];
     if ( in_array('anchor', $types) )
       $fields["Anchor"] = [
-        $translatedLinkText(),
+        $translatedLinkText(false),
         Text::make("Anchor", "anchor")
           ->prefix("#")
           ->required(),
       ];
     if ( in_array("text", $types) )
-      $fields["Text"] = [ $translatedLinkText() ];
+      $fields["Text"] = [ $translatedLinkText(false) ];
     if ( in_array("internal", $types) )
       $fields["Internal"] = [
-        $translatedLinkText(),
+				$translatedLinkText(true),
         PageLink::make("Page", "href")
           ->disableArchives()
           ->postTypes( $internalPostTypes )
@@ -99,19 +108,19 @@ class ConditionalFields
       ];
     if ( in_array("external", $types) )
       $fields["External"] = [
-        $translatedLinkText(),
+        $translatedLinkText(false),
         URL::make("Link", "href")
           ->placeholder("https:// ...")
           ->required(),
       ];
     if ( in_array("email", $types) )
       $fields["Email"] = [
-        $translatedLinkText(),
+        $translatedLinkText(false),
         Email::make("Email address", "href")->required()
       ];
     if ( in_array("file", $types) )
       $fields["File"] = [
-        $translatedLinkText(),
+        $translatedLinkText(false),
         File::make("File", "file")->required(),
         ButtonGroup::make("Behavior", "behavior")
           ->column(20)

@@ -171,7 +171,7 @@ class DocumentRequest {
   static function getPageDocumentsByTemplateName ( string $name, int $fetchFields = 0, $queryOptions = [] ) {
     $profile = self::nanoDebugProfile("DocumentRequest::getPageDocumentsByTemplateName('$name', $fetchFields)");
     $allDocuments = self::getDocumentsByPostType( ["page"], $fetchFields, $queryOptions );
-    $filteredDocuments = array_filter( $allDocuments, fn($d) => $d->name === $name );
+    $filteredDocuments = array_values(array_filter( $allDocuments, fn($d) => $d->name === $name ));
     $profile();
     return $filteredDocuments;
   }
