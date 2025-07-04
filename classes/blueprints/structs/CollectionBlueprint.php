@@ -102,22 +102,31 @@ class CollectionBlueprint extends AbstractBlueprint
 	 * @param string $selectorDefaultLabel First and default label of the filter selector
 	 * @param callable $valuesHandler Handler to get associative array [key => value] of all possible filtering values.
 	 * @param string $filterKey ACF key to filter the document. With underscores for deep elements.
-	 * @param callable $handler $postId => $filterKey. Return an empty key to disable link.
+	 * @param callable $handler $postId => $filterKey or $postId => $filterKeys[]. Return null to disable link.
 	 * @return void
 	 */
 	public function listColumnFilter ( string $columnTitle, string $width, string $selectorDefaultLabel, callable $valuesHandler, string $filterKey, callable $handler ) {
 		$collectionName = $this->name;
 		$columnSlug = acf_slugify($columnTitle);
 		$filterName = "{$collectionName}_{$columnSlug}_filter";
+
 		$this->listColumn($columnTitle, $width, function ($id) use ($handler, $collectionName, $filterName, $valuesHandler) {
 			$values = $valuesHandler();
 			$selectedKey = $handler($id);
-			$value = $values[$selectedKey] ?? "";
-			if ( empty($selectedKey) || empty($value) )
+			if ( empty($selectedKey) )
 				return "-";
-			$baseUrl = admin_url("edit.php?post_type={$collectionName}");
-			$filterUrl = add_query_arg($filterName, $selectedKey, $baseUrl);
-			return '<a href="'.esc_url($filterUrl).'">'.esc_html($value).'</a>';
+			if ( !is_array($selectedKey) )
+				$selectedKey = [$selectedKey];
+			$links = [];
+			foreach ($selectedKey as $k) {
+				$value = $values[$k] ?? "";
+				if ( empty($value) )
+					$links[] = "-";
+				$baseUrl = admin_url("edit.php?post_type={$collectionName}");
+				$filterUrl = add_query_arg($filterName, $k, $baseUrl);
+				$links[] = '<a href="'.esc_url($filterUrl).'">'.esc_html($value).'</a>';
+			}
+			return implode(", ", $links);
 		});
 
 		// Add filter dropdown to the admin screen
@@ -155,11 +164,14 @@ class CollectionBlueprint extends AbstractBlueprint
 				return $query;
 			// Check if we have a filter
 			if ( !empty($_GET[$filterName]) ) {
+				$filter_value = sanitize_text_field($_GET[$filterName]);
 				$query->set('meta_query', [
 					[
 						'key' => $collectionName."___".$filterKey,
-						'compare' => '=',
-						'value' => sanitize_text_field($_GET[$filterName]),
+//						'compare' => '=',
+//						'value' => sanitize_text_field($_GET[$filterName]),
+						'compare' => 'LIKE',
+						'value' => '"'.$filter_value.'"',
 					]
 				]);
 			}
