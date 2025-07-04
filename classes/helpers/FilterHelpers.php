@@ -47,4 +47,17 @@ class FilterHelpers
 		}
 		return $output;
 	}
+
+	/**
+	 * Value cannot be false.
+	 * @param mixed $input
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public static function neverFalse ( mixed $input, mixed $defaultValue ) {
+		if ( $input === false )
+			return $defaultValue;
+		else
+			return $input;
+	}
 }
