@@ -94,4 +94,78 @@ class CollectionBlueprint extends AbstractBlueprint
     }, 10, 2);
   }
 
+	// --------------------------------------------------------------------------- LIST COLUMN FILTER
+
+	/**
+	 * @param string $columnTitle Column name in table's header
+	 * @param string $width Column width in table's header
+	 * @param string $selectorDefaultLabel First and default label of the filter selector
+	 * @param callable $valuesHandler Handler to get associative array [key => value] of all possible filtering values.
+	 * @param string $filterKey ACF key to filter the document. With underscores for deep elements.
+	 * @param callable $handler $postId => $filterKey. Return an empty key to disable link.
+	 * @return void
+	 */
+	public function listColumnFilter ( string $columnTitle, string $width, string $selectorDefaultLabel, callable $valuesHandler, string $filterKey, callable $handler ) {
+		$collectionName = $this->name;
+		$columnSlug = acf_slugify($columnTitle);
+		$filterName = "{$collectionName}_{$columnSlug}_filter";
+		$this->listColumn($columnTitle, $width, function ($id) use ($handler, $collectionName, $filterName, $valuesHandler) {
+			$values = $valuesHandler();
+			$selectedKey = $handler($id);
+			$value = $values[$selectedKey] ?? "";
+			if ( empty($selectedKey) || empty($value) )
+				return "-";
+			$baseUrl = admin_url("edit.php?post_type={$collectionName}");
+			$filterUrl = add_query_arg($filterName, $selectedKey, $baseUrl);
+			return '<a href="'.esc_url($filterUrl).'">'.esc_html($value).'</a>';
+		});
+
+		// Add filter dropdown to the admin screen
+		add_action('restrict_manage_posts', function ($postType) use ($collectionName, $valuesHandler, $filterName, $selectorDefaultLabel) {
+			$values = $valuesHandler();
+			// Only apply to our custom post type
+			if ( $postType !== $collectionName || empty($values) )
+				return;
+			// Get the current filter value
+			$current_filter = (
+				isset($_GET[$filterName])
+				? sanitize_text_field($_GET[$filterName])
+				: ''
+			);
+			// Print dropdown
+			?>
+			<select name="<?php echo $filterName ?>">
+				<option value=""><?php echo $selectorDefaultLabel ?></option>
+				<?php foreach ( $values as $key => $name ) : ?>
+					<option value="<?php echo esc_attr($key); ?>" <?php selected($current_filter, $key); ?>>
+						<?php echo esc_html($name); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+			<?php
+		}, 10, 1);
+
+		// Filter the posts based on the selected filter value
+		add_filter('pre_get_posts', function ($query) use($collectionName, $filterName, $filterKey) {
+			// Only run in admin and for main query
+			if ( !is_admin() || !$query->is_main_query() )
+				return $query;
+			// Only apply to our custom post type
+			if ( !isset($query->query['post_type']) || $query->query['post_type'] !== $collectionName )
+				return $query;
+			// Check if we have a filter
+			if ( !empty($_GET[$filterName]) ) {
+				$query->set('meta_query', [
+					[
+						'key' => $collectionName."___".$filterKey,
+						'compare' => '=',
+						'value' => sanitize_text_field($_GET[$filterName]),
+					]
+				]);
+			}
+			return $query;
+		});
+
+	}
+
 }
