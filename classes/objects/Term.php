@@ -23,7 +23,9 @@ class Term implements JsonSerializable
 		$this->id = $source->term_id;
 		$this->name = $source->name;
 		$this->slug = $source->slug;
-		$this->href = WPSHelper::removeBaseFromHref( get_category_link( $source ), WPSHelper::getBase() );
+		$this->href = get_category_link( $source );
+		if ( !empty($this->href) && defined('WP_CONTENT_URL') )
+			$this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
 		$this->parentID = $source->parent;
 	}
 

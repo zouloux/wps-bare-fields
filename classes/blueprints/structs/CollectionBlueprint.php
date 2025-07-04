@@ -120,8 +120,10 @@ class CollectionBlueprint extends AbstractBlueprint
 			$links = [];
 			foreach ($selectedKey as $k) {
 				$value = $values[$k] ?? "";
-				if ( empty($value) )
+				if ( empty($value) ) {
 					$links[] = "-";
+					continue;
+				}
 				$baseUrl = admin_url("edit.php?post_type={$collectionName}");
 				$filterUrl = add_query_arg($filterName, $k, $baseUrl);
 				$links[] = '<a href="'.esc_url($filterUrl).'">'.esc_html($value).'</a>';

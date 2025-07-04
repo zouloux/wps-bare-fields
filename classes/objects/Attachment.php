@@ -45,10 +45,8 @@ class Attachment implements JsonSerializable {
 		$this->type = $source['type'];
 		$this->href = $source['url'];
 		// Remove base from href
-		if ( !empty($this->href) && defined('WP_HOME') ) {
-      /** @noinspection PhpUndefinedConstantInspection */
-      $this->href = WPSHelper::removeBaseFromHref( $this->href, WP_HOME );
-    }
+		if ( !empty($this->href) && defined('WP_CONTENT_URL') )
+      $this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
 		$this->fileName = $source['filename'];
 		$this->fileSize = $source['filesize'];
     //

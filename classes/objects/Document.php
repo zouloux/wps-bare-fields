@@ -54,10 +54,8 @@ class Document {
     $this->type = $postType;
 		// Remove base from href
 		$this->href = get_permalink( $post );
-		if ( !empty($this->href) && defined('WP_HOME') ) {
-      /** @noinspection PhpUndefinedConstantInspection */
-      $this->href = WPSHelper::removeBaseFromHref( $this->href, WP_HOME );
-    }
+		if ( !empty($this->href) && defined('WP_CONTENT_URL') )
+      $this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
     // Parse translated title
     $this->title = $post->post_title ?? "";
     if ( Locales::isMultilang() )

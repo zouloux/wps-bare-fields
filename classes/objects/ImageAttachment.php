@@ -61,10 +61,8 @@ class ImageAttachment extends Attachment {
 		foreach ( $source['sizes'] as $key => $size ) {
 			if ( isset($source['sizes'][$key.'-width']) && isset($source['sizes'][$key.'-height']) ) {
 				$href = $size;
-				if ( !empty($href) && defined('WP_HOME') ) {
-          /** @noinspection PhpUndefinedConstantInspection */
-          $href = WPSHelper::removeBaseFromHref( $href, WP_HOME );
-        }
+				if ( !empty($this->href) && defined('WP_CONTENT_URL') )
+					$this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
 				if ( $href === $this->href )
 					continue;
 				$this->formats[] = new ImageFormat([
