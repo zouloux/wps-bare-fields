@@ -297,4 +297,21 @@ class DocumentRequest {
 		return $total;
 	}
 
+	// --------------------------------------------------------------------------- PAGE IDS FROM PAGE TEMPLATE
+
+	/**
+	 * Get pages ids of specific templates.
+	 * @param string $templateName
+	 * @param array $queryParameters Use to filter out not published pages for exemple
+	 * @return array
+	 */
+	static function getPageIdsFromTemplateName (string $templateName, array $queryParameters = []):array {
+		$pages = get_pages([
+			'meta_key'   => '_wp_page_template',
+			'meta_value' => $templateName,
+			...$queryParameters,
+		]);
+		return array_map(fn($page) => $page->ID, $pages);
+	}
+
 }

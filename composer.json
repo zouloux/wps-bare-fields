@@ -3,7 +3,7 @@
 	"description": "ACF Pro with blueprints",
 	"type": "wordpress-muplugin",
 	"license": "MIT",
-	"version" : "0.6.20",
+	"version" : "0.6.21",
 	"authors": [
 		{
 			"name": "Alexis Bouhet"
