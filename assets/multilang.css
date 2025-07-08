@@ -217,3 +217,9 @@ html {
 .acf-field-wysiwyg.BareFields_translatedField:not(.clean) > .acf-input > .acf-editor-wrap {
 	border: 1px solid #ccc;
 }
+
+/* Translatable Editor with tabs */
+.BareFields_translatedField.acf-editor-with-tabs .wp-editor-tabs {
+	float: left;
+	margin-top: 6px;
+}

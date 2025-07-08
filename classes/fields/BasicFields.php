@@ -53,10 +53,11 @@ class BasicFields
       ->wrapper(['class' => $imageSizeClass]);
   }
 
-  public static function createEditor ( $label = "Content", $key = "content", $allowMedia = false, $class = 'clean' ) {
+	// tabs : all / visual / text
+  public static function createEditor ( $label = "Content", $key = "content", $allowMedia = false, $class = "clean", string $tabs = "visual" ) {
     $editor = WYSIWYGEditor::make( $label, $key )
-      ->tabs('visual')
-      ->wrapper(['class' => $class]);
+      ->tabs($tabs)
+      ->wrapper(['class' => $class.($tabs === "all" ? " acf-editor-with-tabs" : "")]);
     if ( !$allowMedia )
       $editor->disableMediaUpload();
     return $editor;
