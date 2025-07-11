@@ -191,7 +191,7 @@ class DocumentFilter
 				}
 				// Convert absolute links to relative
 				// FIXME : Add a config there ?
-				if ( !empty($node["href"]) ) {
+				if ( !empty($node["href"]) && str_starts_with($node["href"], WPSHelper::getBase()) ) {
 					$node["href"] = WPSHelper::removeBaseFromHref($node["href"], WPSHelper::getBase());
 				}
 				// Insert locale in links
