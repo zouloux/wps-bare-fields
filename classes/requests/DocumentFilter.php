@@ -174,17 +174,21 @@ class DocumentFilter
 				// Not disabled, just remove the enabled value
 				unset( $node['enabled'] );
       }
-      // Convert conditional fields
+      // Convert conditional fields and links
       if (
         is_array($node)
         && isset($node['selected']) && is_string($node['selected'])
-//        && isset($node[$node['selected']]) && is_array($node[$node['selected']])
       ) {
         $selected = $node["selected"];
         $data[ $key ] = [
           "selected" => $selected,
           ...($node[$selected] ?? [])
         ];
+				// Set link text from the page title if empty
+				if ( isset($node["href"]) && empty($node["text"]) ) {
+					$document = DocumentRequest::getDocumentByPath($node["href"]);
+					$node["text"] = $document->title;
+				}
       }
       // Convert value objects
       if ( $node instanceof WP_Post ) {
