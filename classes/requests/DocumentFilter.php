@@ -189,6 +189,20 @@ class DocumentFilter
 					$document = DocumentRequest::getDocumentByPath($node["href"]);
 					$node["text"] = $document->title;
 				}
+				// Convert absolute links to relative
+				// FIXME : Add a config there ?
+				if ( !empty($node["href"]) ) {
+					$node["href"] = WPSHelper::removeBaseFromHref($node["href"], WPSHelper::getBase());
+				}
+				// Insert locale in links
+				if ( Locales::isMultilang() && !empty($node["href"]) ) {
+					// If href is relative, simply prepend
+					if ( str_starts_with($node["href"], "/")) {
+						$node["href"] = "/".Locales::getCurrentLocale().$node["href"];
+					}
+					// FIXME : If link is not relative, we should insert instead of prepend
+					else {}
+				}
       }
       // Convert value objects
       if ( $node instanceof WP_Post ) {
