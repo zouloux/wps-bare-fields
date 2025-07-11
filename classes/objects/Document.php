@@ -56,6 +56,14 @@ class Document {
 		$this->href = get_permalink( $post );
 		if ( !empty($this->href) && defined('WP_CONTENT_URL') )
       $this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
+		// Add locale if multilang
+		if ( Locales::isMultilang() ) {
+			if ( str_starts_with($this->href, "/") ) {
+				$this->href = "/".Locales::getCurrentLocale().$this->href;
+			}
+			// TODO : Insert locale in absolute link
+			else {}
+		}
     // Parse translated title
     $this->title = $post->post_title ?? "";
     if ( Locales::isMultilang() )
