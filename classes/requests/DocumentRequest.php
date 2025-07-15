@@ -315,4 +315,23 @@ class DocumentRequest {
 		return array_map(fn($page) => $page->ID, $pages);
 	}
 
+	// --------------------------------------------------------------------------- COUNT POSTS BY POST TYPE
+
+	/**
+	 * Count the number of posts of a specific post type.
+	 * @param string $postType The type of posts to count, e.g., 'post', 'page', or any custom post type.
+	 * @param bool $onlyPublished Optional. Whether to count only published posts. Defaults to true.
+	 * @param array $queryParameters Optional. Additional query arguments to refine the post query. Defaults to an empty array.
+	 * @return int The count of posts matching the specified criteria.
+	 */
+	static function countPostsByPostType ( string $postType, bool $onlyPublished = true, array $queryParameters = [] ) {
+    $args = [
+			'post_type'   => $postType,
+			'post_status' => $onlyPublished ? 'publish' : null,
+			'numberposts' => -1,
+			...$queryParameters
+    ];
+    $posts = get_posts( $args );
+    return count( $posts );
+	}
 }
