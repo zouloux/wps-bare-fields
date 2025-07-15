@@ -6,6 +6,7 @@ use BareFields\blueprints\abstract\AbstractBlueprint;
 use BareFields\blueprints\BlueprintsManager;
 use BareFields\helpers\WPSHelper;
 use BareFields\multilang\Locales;
+use BareFields\multilang\Multilang;
 use BareFields\objects\Attachment;
 use BareFields\objects\Document;
 use BareFields\objects\ImageAttachment;
@@ -39,7 +40,7 @@ class DocumentFilter
 
   protected static $_fieldsCache = [];
 
-  public static function createDocumentFromPost ( WP_Post $post, int $fetchFields ) {
+  public static function createDocumentFromPost ( WP_Post $post, int $fetchFields = 0 ) {
     // Get associated blueprints to this post
     $blueprints = BlueprintsManager::getMatchingBlueprintsForPost( $post );
     // Check if this post has a multilang blueprint that is not forced to all locales
@@ -75,7 +76,7 @@ class DocumentFilter
       }
       // Patch fields
       if ( !empty( $fields ) )
-        $fields = self::recursivePatchFields( $fields );
+        $fields = self::recursivePatchFields( $fields, $fetchFields );
       // Grab request filter handlers
       $handlers = [];
       foreach ( $blueprints as $blueprint )
@@ -119,12 +120,12 @@ class DocumentFilter
 
   // ---------------------------------------------------------------------------
 
-  public static function recursivePatchFields ( &$data ) : array {
+  public static function recursivePatchFields ( &$data, int $fetchFields = 0 ) : array {
     // First, convert recursively all locales
     // This way we can filter later for translated enabled fields
     if ( Locales::isMultilang() )
       $data = self::recursivePatchLocale( $data, Locales::getCurrentLocale() );
-    $data = self::recursivePatchMisc( $data );
+    $data = self::recursivePatchMisc( $data, $fetchFields );
     return $data;
   }
 
@@ -145,7 +146,7 @@ class DocumentFilter
     return $data;
   }
 
-  public static function recursivePatchMisc ( &$data ) : array {
+  public static function recursivePatchMisc ( &$data, int $fetchFields ) : array {
     $patchIndexedArray = false;
     foreach ( $data as $key => &$node ) {
 			// Remove messages, sub-titles, accordions ...
@@ -186,8 +187,17 @@ class DocumentFilter
         ];
 				// Set link text from the page title if empty
 				if ( isset($node["href"]) && empty($node["text"]) ) {
-					$document = DocumentRequest::getDocumentByPath($node["href"]);
-					$node["text"] = $document->title;
+					$page = DocumentRequest::getWPPostByPath( $node["href"] );
+					if ( !is_null($page) ) {
+						$text = get_the_title( $page->ID );
+						if ( empty($text) )
+							$text = "";
+						$node["text"] = (
+							Locales::isMultilang()
+							? Multilang::parseInlinedValue($text, Locales::getCurrentLocale())
+							: $text
+						);
+					}
 				}
 				// Convert absolute links to relative
 				// FIXME : Add a config there ?
@@ -206,8 +216,7 @@ class DocumentFilter
       }
       // Convert value objects
       if ( $node instanceof WP_Post ) {
-        // todo : fetch fields should be configurable
-				$data[ $key ] = self::createDocumentFromPost( $node, 0 );
+				$data[ $key ] = self::createDocumentFromPost( $node, $fetchFields - 1 );
 				continue;
 			}
 			if (
@@ -230,7 +239,7 @@ class DocumentFilter
 			}
       // Recursive
       if ( is_array($node) )
-        $data[ $key ] = self::recursivePatchMisc($node);
+        $data[ $key ] = self::recursivePatchMisc($node, $fetchFields);
     }
 		if ( $patchIndexedArray )
 			$data = array_values( $data );

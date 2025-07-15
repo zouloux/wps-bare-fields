@@ -103,14 +103,14 @@ class CachedDocumentRequest {
 
   // --------------------------------------------------------------------------- SINGLETON
 
-  public static function getSingleton ( string $singletonName, string $locale = "" ) {
-    $cacheKey = "singleton_{$locale}_$singletonName";
-    return Cache::define($cacheKey, function () use ( $locale, $singletonName ) {
+  public static function getSingleton ( string $singletonName, int $fetchFields = 0, string $locale = "" ) {
+    $cacheKey = "singleton_{$locale}_{$fetchFields}_$singletonName";
+    return Cache::define($cacheKey, function () use ( $singletonName, $fetchFields, $locale ) {
       Loader::loadWordpress();
       if ( !empty( $locale ) )
         Locales::setCurrentLocale( $locale );
-      $data = DocumentRequest::getSingletonFields( $singletonName );
-      return DocumentFilter::recursiveSerialize( $data, 0 );
+      $data = DocumentRequest::getSingletonFields( $singletonName, $fetchFields );
+      return DocumentFilter::recursiveSerialize( $data, $fetchFields );
     });
   }
 

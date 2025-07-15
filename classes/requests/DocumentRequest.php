@@ -29,7 +29,7 @@ class DocumentRequest {
 	 * @param string $path Path can be relative from base or absolute with scheme and host.
 	 * @return WP_Post|null
 	 */
-	protected static function getWPPostByPath ( string $path ) :? WP_Post {
+	static function getWPPostByPath ( string $path ) :? WP_Post {
 		$postID = url_to_postid( $path );
 		if ( $postID === 0 ) {
 			// Get host
@@ -168,12 +168,13 @@ class DocumentRequest {
 
   // --------------------------------------------------------------------------- PAGE
 
-  static function getPageDocumentsByTemplateName ( string $name, int $fetchFields = 0, $queryOptions = [] ) {
+  static function getPageDocumentsByTemplateName ( string $name, int $fetchFields = 0, $queryOptions = [], bool $onlyPublished = true ):array {
     $profile = self::nanoDebugProfile("DocumentRequest::getPageDocumentsByTemplateName('$name', $fetchFields)");
-    $allDocuments = self::getDocumentsByPostType( ["page"], $fetchFields, $queryOptions );
-    $filteredDocuments = array_values(array_filter( $allDocuments, fn($d) => $d->name === $name ));
+		$documentIDs = self::getPageIdsFromTemplateName( $name, $queryOptions );
+		$documents = array_map(fn ($id) => self::getDocumentByID($id, $fetchFields, $onlyPublished), $documentIDs);
+		$documents = array_values($documents);
     $profile();
-    return $filteredDocuments;
+		return $documents;
   }
 
 	static function getSubPagesOfPage ( string $pageID, int $fetchFields = 0, int $depth = 1, string $order = "menu_order", $queryOptions = [] ) {
@@ -196,7 +197,7 @@ class DocumentRequest {
 
   // --------------------------------------------------------------------------- SINGLETON
 
-  static function getSingletonFields ( string $singletonName ) {
+  static function getSingletonFields ( string $singletonName, int $fetchFields = 0 ) {
     $profile = self::nanoDebugProfile("DocumentRequest::getSingletonFields('$singletonName')");
 		$singleton = BlueprintsManager::getInstalledSingletonByName( $singletonName );
     if ( !$singleton )
@@ -220,11 +221,11 @@ class DocumentRequest {
 				continue;
 			$fields[ $groupeName ] = $groupData;
 		}
-    $fields = DocumentFilter::recursivePatchFields( $fields );
+    $fields = DocumentFilter::recursivePatchFields( $fields, $fetchFields );
     DocumentFilter::filterRootGroupFields( $singleton, $fields );
     $handlers = $singleton->getRequestFilterHandlers();
     foreach ( $handlers as $handler )
-      $fields = $handler( $fields );
+      $fields = $handler( $fields, $fetchFields );
 		$profile();
 		return $fields;
   }
