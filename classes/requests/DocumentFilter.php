@@ -175,6 +175,11 @@ class DocumentFilter
 				// Not disabled, just remove the enabled value
 				unset( $node['enabled'] );
       }
+			// Convert Flexible Layouts
+			if ( is_array($node) && isset($node['acf_fc_layout']) ) {
+				$node["type"] = $node['acf_fc_layout'];
+				unset( $node['acf_fc_layout'] );
+			}
       // Convert conditional fields and links
       if (
         is_array($node)
