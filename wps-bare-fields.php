@@ -4,13 +4,13 @@
  * Plugin URI:        https://github.com/zouloux/wps-bare-fields
  * GitHub Plugin URI: https://github.com/zouloux/wps-bare-fields
  * Description:       ACF Pro with blueprints
- * Author:            ZoulouX
+ * Author:            Alexis Bouhet
  * Author URI:        https://zouloux.com
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
  * Text Domain:       Bare Fields
  * Domain Path:       /cms
- * Version:           1.0.0
+ * Version:           0.7.3
  * Copyright:         © 2024 Alexis Bouhet
  */
 
