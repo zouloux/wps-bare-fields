@@ -33,8 +33,7 @@ do
   res=$(sed -E "s/${currentVersion}/${newVersion}/" "$i")
   echo "$res" > "$i";
 done
-# Update version in wps-bare-fields.php
-echo "Updating wps-bare-fields.php"
+# Update version in php file
 sed -i '' -E "s/ \* Version:[ ]+[0-9]+\.[0-9]+\.[0-9]+/ * Version:           ${newVersion}/" "wps-bare-fields.php"
 
 # ------------------------------------------------------------------------------ COMMIT & PUSH

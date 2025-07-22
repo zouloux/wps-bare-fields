@@ -70,6 +70,7 @@ jQuery(function ($) {
 	$document.on('click', ".BareFields_locale", function(event) {
 		cloneFinished = false
 		if ( !localeSelector ) return
+		event.preventDefault()
 		removeClonedLocaleSelector();
 		const { pageX, pageY } = event.originalEvent;
 		clonedLocaleSelector = localeSelector.cloneNode(true)
