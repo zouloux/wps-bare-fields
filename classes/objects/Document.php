@@ -2,6 +2,9 @@
 
 namespace BareFields\objects;
 
+use BareFields\blueprints\abstract\AbstractBlueprint;
+use BareFields\blueprints\structs\CollectionBlueprint;
+use BareFields\blueprints\structs\PageBlueprint;
 use BareFields\helpers\WPSHelper;
 use BareFields\multilang\Locales;
 use BareFields\multilang\Multilang;
@@ -32,9 +35,11 @@ class Document {
 
   public array $locales;
 
+  public bool $hasSubPaths;
+
   // --------------------------------------------------------------------------- CONSTRUCT
 
-  public function __construct ( WP_Post $post ) {
+  public function __construct ( WP_Post $post, array $blueprints = [] ) {
     // Save original WP post and id
 		$this->_source = $post;
     $this->id = $post->ID;
@@ -73,6 +78,13 @@ class Document {
 		$this->parentID    = $post->post_parent;
 		$this->date        = new \DateTime( $post->post_date );
 		$this->modified    = new \DateTime( $post->post_modified );
+    /** @var AbstractBlueprint $blueprint */
+    foreach ($blueprints as $blueprint) {
+      if ( $blueprint instanceof PageBlueprint or $blueprint instanceof CollectionBlueprint ) {
+        if ( $blueprint->getHasSubPaths() )
+          $this->hasSubPaths = true;
+      }
+		}
   }
 
   // --------------------------------------------------------------------------- FIELDS
@@ -205,6 +217,8 @@ class Document {
 			$json["fields"] = DocumentFilter::recursiveSerialize( $this->fields, $fetchFields );
 		if ( !empty($this->locales) )
 			$json["locales"] = $this->locales;
+    if ( !empty($this->hasSubPaths) )
+      $json["hasSubPaths"] = $this->hasSubPaths;
 		return $json;
 	}
 }

@@ -56,7 +56,7 @@ class DocumentFilter
         return null;
     }
     // Convert to document
-    $document = new Document( $post );
+    $document = new Document( $post, $blueprints );
     // Check if fields are available in cache
     $fieldsCacheKey = $post->ID."__".$fetchFields."__".(Locales::isMultilang() ? Locales::getCurrentLocale() : "");
     if ( isset(self::$_fieldsCache[$fieldsCacheKey]) ) {

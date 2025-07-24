@@ -6,6 +6,7 @@ use BareFields\blueprints\abstract\AbstractBlueprint;
 use BareFields\blueprints\abstract\BlueprintMenu;
 use BareFields\blueprints\abstract\BlueprintOptions;
 use BareFields\blueprints\abstract\BlueprintOrderable;
+use BareFields\blueprints\abstract\BlueprintSubPaths;
 
 class CollectionBlueprint extends AbstractBlueprint
 {
@@ -14,6 +15,7 @@ class CollectionBlueprint extends AbstractBlueprint
   use BlueprintMenu;
   use BlueprintOptions;
   use BlueprintOrderable;
+  use BlueprintSubPaths;
 
   // --------------------------------------------------------------------------- CONSTRUCT
 

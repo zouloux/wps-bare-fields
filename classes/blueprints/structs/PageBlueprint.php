@@ -5,6 +5,7 @@ namespace BareFields\blueprints\structs;
 use BareFields\blueprints\abstract\AbstractBlueprint;
 use BareFields\blueprints\abstract\BlueprintEditor;
 use BareFields\blueprints\abstract\BlueprintOrderable;
+use BareFields\blueprints\abstract\BlueprintSubPaths;
 
 class PageBlueprint extends AbstractBlueprint
 {
@@ -12,6 +13,7 @@ class PageBlueprint extends AbstractBlueprint
 
   use BlueprintEditor;
   use BlueprintOrderable;
+  use BlueprintSubPaths;
 
   // --------------------------------------------------------------------------- CONSTRUCT
 
