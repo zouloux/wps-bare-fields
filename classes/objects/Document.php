@@ -37,6 +37,8 @@ class Document {
 
   public bool $hasSubPaths;
 
+	public string $subPath;
+
   // --------------------------------------------------------------------------- CONSTRUCT
 
   public function __construct ( WP_Post $post, array $blueprints = [] ) {
@@ -217,8 +219,8 @@ class Document {
 			$json["fields"] = DocumentFilter::recursiveSerialize( $this->fields, $fetchFields );
 		if ( !empty($this->locales) )
 			$json["locales"] = $this->locales;
-    if ( !empty($this->hasSubPaths) )
-      $json["hasSubPaths"] = $this->hasSubPaths;
+    if ( !empty($this->subPath) )
+      $json["subPath"] = $this->subPath;
 		return $json;
 	}
 }

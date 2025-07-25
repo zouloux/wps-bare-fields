@@ -144,11 +144,32 @@ class DocumentRequest {
   static function getDocumentByPath ( string $path, int $fetchFields = 0 ) :? Document {
 		$profile = self::nanoDebugProfile("DocumentRequest::getDocumentByPath('$path', $fetchFields)");
 		$post = self::getWPPostByPath( $path );
-		$filtered = (
-      is_null($post)
-      ? null
-      : DocumentFilter::createDocumentFromPost( $post, $fetchFields )
-    );
+		// Post is not found, check if we are in a subpath of another post
+		if ( is_null($post) ) {
+			// Remove last part from href and get associated post
+			$pathParts = explode('/', trim($path, '/'));
+			$discardedPart = array_pop($pathParts);
+			$hrefWithoutLastPart = '/' . implode('/', $pathParts);
+			//
+			$post = self::getWPPostByPath( $hrefWithoutLastPart );
+			// If we found a post
+			if ( !is_null($post) ) {
+				// Check if this post has sub paths, keep it if so, discard it otherwise
+				$filtered = DocumentFilter::createDocumentFromPost( $post, $fetchFields );
+				if ( $filtered->hasSubPaths ) {
+					$filtered->subPath = '/'.$discardedPart;
+				} else {
+					$filtered = null;
+				}
+			}
+		}
+		// Post has been found, create document from post, filter and return it
+		else {
+			$filtered = DocumentFilter::createDocumentFromPost( $post, $fetchFields );
+			// Set default subpath if needed
+			if ( $filtered->hasSubPaths )
+				$filtered->subPath = "/";
+		}
 		$profile();
 		return $filtered;
   }
