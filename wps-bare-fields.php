@@ -10,7 +10,7 @@
  * License URI:       https://opensource.org/licenses/MIT
  * Text Domain:       Bare Fields
  * Domain Path:       /cms
- * Version:           0.7.6
+ * Version:           0.8.0
  * Copyright:         © 2024 Alexis Bouhet
  */
 

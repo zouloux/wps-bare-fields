@@ -81,6 +81,7 @@ class Document {
 		$this->date        = new \DateTime( $post->post_date );
 		$this->modified    = new \DateTime( $post->post_modified );
     /** @var AbstractBlueprint $blueprint */
+		$this->hasSubPaths = false;
     foreach ($blueprints as $blueprint) {
       if ( $blueprint instanceof PageBlueprint or $blueprint instanceof CollectionBlueprint ) {
         if ( $blueprint->getHasSubPaths() )
