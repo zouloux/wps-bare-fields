@@ -109,10 +109,11 @@ class DocumentRequest {
    * @param array $postTypes
    * @param int $fetchFields
    * @param array $queryOptions
+   * @param bool $menuOrder
    *
    * @return Document[]
    */
-  static function getDocumentsByPostType ( array $postTypes, int $fetchFields = 0, array $queryOptions = [] ) : array {
+  static function getDocumentsByPostType ( array $postTypes, int $fetchFields = 0, bool $menuOrder = false, array $queryOptions = [] ) : array {
     $postTypesAsString = implode(',', $postTypes);
     $profile = self::nanoDebugProfile("DocumentRequest::getDocumentsByPostType(['$postTypesAsString'], $fetchFields)");
     if ( empty($postTypes) )
@@ -127,6 +128,13 @@ class DocumentRequest {
         get_posts([
           "numberposts" => -1,
           "post_type" => $postType,
+					...(
+						$menuOrder
+						? [
+							"orderby" => "menu_order",
+							"order" => "ASC",
+						] : []
+					),
           ...$queryOptions,
         ])
       );
@@ -171,7 +179,7 @@ class DocumentRequest {
 				$filtered->subPath = "/";
 		}
 		$profile();
-		return $filtered;
+		return $filtered ?? null;
   }
 
 	static function getDocumentByID ( string|int $postID, int $fetchFields = 0, bool $onlyPublished = true ) :? Document {
