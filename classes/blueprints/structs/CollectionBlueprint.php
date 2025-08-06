@@ -105,9 +105,10 @@ class CollectionBlueprint extends AbstractBlueprint
 	 * @param callable $valuesHandler Handler to get associative array [key => value] of all possible filtering values.
 	 * @param string $filterKey ACF key to filter the document. With underscores for deep elements.
 	 * @param callable $handler $postId => $filterKey or $postId => $filterKeys[]. Return null to disable link.
+	 * @param boolean $strictSearch apply strict equal or "like" as SQL request on field. Default is true.
 	 * @return void
 	 */
-	public function listColumnFilter ( string $columnTitle, string $width, string $selectorDefaultLabel, callable $valuesHandler, string $filterKey, callable $handler ) {
+	public function listColumnFilter ( string $columnTitle, string $width, string $selectorDefaultLabel, callable $valuesHandler, string $filterKey, callable $handler, bool $strictSearch = true ) {
 		$collectionName = $this->name;
 		$columnSlug = acf_slugify($columnTitle);
 		$filterName = "{$collectionName}_{$columnSlug}_filter";
@@ -159,7 +160,7 @@ class CollectionBlueprint extends AbstractBlueprint
 		}, 10, 1);
 
 		// Filter the posts based on the selected filter value
-		add_filter('pre_get_posts', function ($query) use($collectionName, $filterName, $filterKey) {
+		add_filter('pre_get_posts', function ($query) use($collectionName, $filterName, $filterKey, $strictSearch) {
 			// Only run in admin and for main query
 			if ( !is_admin() || !$query->is_main_query() )
 				return $query;
@@ -167,18 +168,27 @@ class CollectionBlueprint extends AbstractBlueprint
 			if ( !isset($query->query['post_type']) || $query->query['post_type'] !== $collectionName )
 				return $query;
 			// Check if we have a filter
-			if ( !empty($_GET[$filterName]) ) {
-				$filter_value = sanitize_text_field($_GET[$filterName]);
-				$query->set('meta_query', [
-					[
-						'key' => $collectionName."___".$filterKey,
-//						'compare' => '=',
-//						'value' => sanitize_text_field($_GET[$filterName]),
-						'compare' => 'LIKE',
-						'value' => '"'.$filter_value.'"',
-					]
-				]);
+			if ( empty($_GET[$filterName]) )
+				return $query;
+			$filter_value = sanitize_text_field($_GET[$filterName]);
+			$fieldKey = $collectionName."___".$filterKey;
+			if ( $strictSearch ) {
+				$queryArguments = [
+					'compare' => '=',
+					'value' => sanitize_text_field($_GET[$filterName]),
+				];
+			} else {
+				$queryArguments = [
+					'compare' => 'LIKE',
+					'value' => '%'.$filter_value.'%',
+				];
 			}
+			$query->set('meta_query', [
+				[
+					'key' => $fieldKey,
+					...$queryArguments,
+				]
+			]);
 			return $query;
 		});
 
