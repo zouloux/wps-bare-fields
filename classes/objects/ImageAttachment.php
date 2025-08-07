@@ -55,14 +55,19 @@ class ImageAttachment extends Attachment {
 		// Do not treat svg like rasterized images
 		if ( $source['subtype'] === 'svg+xml' )
 			return;
+		// Remove base from href
+		if ( !empty($this->href) && defined('WP_CONTENT_URL') )
+			$this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
 		// NOTE : From now, only for raster images
 		// Native formats (same as original mime types but resized)
 //		dd($source);
 		foreach ( $source['sizes'] as $key => $size ) {
 			if ( isset($source['sizes'][$key.'-width']) && isset($source['sizes'][$key.'-height']) ) {
 				$href = $size;
-				if ( !empty($this->href) && defined('WP_CONTENT_URL') )
-					$this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
+				// Remove base from href
+				if ( !empty($href) && defined('WP_CONTENT_URL') )
+					$href = WPSHelper::removeBaseFromHref( $href, WP_CONTENT_URL );
+				// Do not create format for the source image
 				if ( $href === $this->href )
 					continue;
 				$this->formats[] = new ImageFormat([
