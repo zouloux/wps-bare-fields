@@ -69,7 +69,7 @@ class DocumentRequest {
       if ( $documentMetaSitemap === "hidden" )
         continue;
       $sitemap[] = [
-        "href" => "$absoluteBase/$locale".$document->href,
+        "href" => $absoluteBase.$document->href,
         "date" => $document->date->getTimestamp(),
       ];
     }
