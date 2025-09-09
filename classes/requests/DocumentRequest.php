@@ -263,7 +263,7 @@ class DocumentRequest {
 
   static function getCollectionDocuments ( string $name, int $fetchFields = 0, $queryOptions = [] ) {
     $profile = self::nanoDebugProfile("DocumentRequest::getSingletonFields('$name', $fetchFields)");
-		$documents = self::getDocumentsByPostType([$name], $fetchFields, $queryOptions);
+		$documents = self::getDocumentsByPostType([$name], $fetchFields, false, $queryOptions);
     $profile();
     return $documents;
   }
