@@ -164,7 +164,7 @@ class DocumentRequest {
 			if ( !is_null($post) ) {
 				// Check if this post has sub paths, keep it if so, discard it otherwise
 				$filtered = DocumentFilter::createDocumentFromPost( $post, $fetchFields );
-				if ( $filtered->hasSubPaths ) {
+				if ( !is_null($filtered) && $filtered->hasSubPaths ) {
 					$filtered->subPath = '/'.$discardedPart;
 				} else {
 					$filtered = null;
@@ -175,7 +175,7 @@ class DocumentRequest {
 		else {
 			$filtered = DocumentFilter::createDocumentFromPost( $post, $fetchFields );
 			// Set default subpath if needed
-			if ( $filtered->hasSubPaths )
+			if ( !is_null($filtered) && $filtered->hasSubPaths )
 				$filtered->subPath = "/";
 		}
 		$profile();
@@ -305,6 +305,7 @@ class DocumentRequest {
 	 * @return int Will return the number of published posts. The cache should be cleared if > 0.
 	 */
 	static function publishScheduledPosts ( array $postTypes = ["post", "page"] ) {
+		/** @noinspection PhpUndefinedConstantInspection */
 		$timezoneOffset = get_option('gmt_offset') * HOUR_IN_SECONDS;
 		$query = new WP_Query([
 			'post_type' => $postTypes,

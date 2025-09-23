@@ -65,8 +65,15 @@ add_action("admin_head", function () {
   $isMultilang = false;
   // Detect multi-lang pages to inject the locale selector
   $blueprints = [];
+//	dd($screen);
+  // Uploads
+	if ( $screen->post_type === "attachment" ) {
+		$isMultilang = true;
+		$blueprints = [];
+		$isListing = $screen->base === "upload";
+	}
   // Page / post / collection listing or editing
-  if ( $screen->base === "edit" || $screen->base === "post" ) {
+  else if ( $screen->base === "edit" || $screen->base === "post" ) {
     // Extract post type and convert to collection if needed
     $type = $screen->post_type;
     $name = null;
@@ -233,8 +240,13 @@ add_action( 'init', function () {
 	if ( count(Locales::getLocalesKeys()) <= 1 ) return;
 	// Get multilang blueprints but do not show the meta box on blueprints
 	// that have all locales forced
+	// fixme : we should detect if forceMultilang is in an other blueprint
+	// ex : ->multilang() on all pages blueprint
+	// 			->forceMultilang() on a specific page blueprint
+	// Cause meta box to be shown and it should not
   $blueprints = BlueprintsManager::getMultilangBlueprints( true );
 	$locations = BlueprintsManager::getLocationsOfBlueprints( $blueprints );
+	//
   acf_add_local_field_group([
     'key'      => 'group_locales',
     'title'    => 'Multilang',
@@ -262,7 +274,7 @@ add_action( 'admin_enqueue_scripts', function() {
 });
 add_action( 'wp_ajax_acf_save_locales', function() {
 	if ( !Locales::isMultilang() ) return;
-  if ( ! isset( $_POST['post_id'], $_POST['locales'] ) ) {
+  if ( !isset($_POST['post_id']) || !isset($_POST['locales']) ) {
     wp_send_json_error();
   }
   $postId = intval( $_POST['post_id'] );
@@ -280,32 +292,43 @@ add_action("edit_form_after_title", function () {
 	// Get matching blueprints of this created post
 	// Editing a post
 	// Has to be first for the parent_base
-	if ( $screen->action === "add" ) {
-		$type = $screen->post_type;
-		$name = "";
-		if ( $type !== "page" && $type !== "post" ) {
-			$name = $type;
-			$type = "collection";
-		}
-		$blueprints = BlueprintsManager::getMatchingBlueprints( $type, $name );
-	}
-	// Get matching blueprints of this edited post
-	else if (
-		$screen->action === "edit" || $screen->parent_base === "edit"
-		|| (isset($_GET["action"]) && $_GET["action"] === "edit")
-	) {
-		// Get post
+//	dump($screen);
+	if ( $screen->base === "post" && $screen->post_type === "attachment" ) {
+		// Get attachment
 		$postId = $_GET["post"] ?? -1;
 		$post = get_post( $postId );
-  	$title = $post->post_title;
+		$title = $post->post_title;
 		if ( is_null($post) )
 			return;
-		// Get associated blueprints to this post
-		$blueprints = BlueprintsManager::getMatchingBlueprintsForPost( $post );
 	}
-  // Only continue if multilang title
-  $multilangBlueprints = array_filter($blueprints, fn (AbstractBlueprint $d) => $d->getMultilangTitle() );
-  if ( count($multilangBlueprints) === 0 ) return;
+	else {
+		if ( $screen->action === "add" ) {
+			$type = $screen->post_type;
+			$name = "";
+			if ( $type !== "page" && $type !== "post" ) {
+				$name = $type;
+				$type = "collection";
+			}
+			$blueprints = BlueprintsManager::getMatchingBlueprints( $type, $name );
+		}
+		// Get matching blueprints of this edited post
+		else if (
+			$screen->action === "edit" || $screen->parent_base === "edit"
+			|| (isset($_GET["action"]) && $_GET["action"] === "edit")
+		) {
+			// Get post
+			$postId = $_GET["post"] ?? -1;
+			$post = get_post( $postId );
+			$title = $post->post_title;
+			if ( is_null($post) )
+				return;
+			// Get associated blueprints to this post
+			$blueprints = BlueprintsManager::getMatchingBlueprintsForPost( $post );
+		}
+		// Only continue if multilang title
+		$multilangBlueprints = array_filter($blueprints, fn (AbstractBlueprint $d) => $d->getMultilangTitle() );
+		if ( count($multilangBlueprints) === 0 ) return;
+	}
   // Create I title field by locale
   $locales = Locales::getLocalesKeys();
 	?>
@@ -330,14 +353,17 @@ add_action("edit_form_after_title", function () {
 
 // After post has been saved, we parse title and re-save it as translated
 // Cannot use save_post hook because of recursive loop
-add_action("wp_after_insert_post", function ($postId) {
+function _wps_post_updated ($postId) {
 	if ( !Locales::isMultilang() ) return;
   if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
   if ( wp_is_post_revision( $postId ) ) return;
   if ( !current_user_can( 'edit_post', $postId ) ) return;
 	// Check if this post has multilang title
 	global $post;
-	if ( !is_null($post) ) {
+	if ( is_null($post) )
+		return;
+	$isAttachment = $post->post_type === "attachment";
+	if (!$isAttachment) {
 		$blueprints = BlueprintsManager::getMatchingBlueprintsForPost( $post );
 		$multilangBlueprints = array_filter($blueprints, fn (AbstractBlueprint $d) => $d->getMultilangTitle() );
 		if ( count($multilangBlueprints) === 0 ) return;
@@ -352,12 +378,16 @@ add_action("wp_after_insert_post", function ($postId) {
   }
 	if ( !empty($encodedTitle) )
   	$encodedTitle .= "[:]";
-  wp_update_post([
-    "ID" => $postId,
-    "post_title" => $encodedTitle,
-  ], fire_after_hooks: false); // avoid recursive loop
-});
-
+	// save and avoid recursive loop
+	remove_action( 'edit_attachment', '_wps_post_updated' );
+	wp_update_post([
+		"ID" => $postId,
+		"post_title" => $encodedTitle,
+	], fire_after_hooks: false); // avoid recursive loop
+	add_action( 'edit_attachment', '_wps_post_updated' );
+}
+add_action("edit_attachment", "_wps_post_updated");
+add_action("wp_after_insert_post", "_wps_post_updated");
 
 
 // Add locale columns in list view of admin
