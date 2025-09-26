@@ -4,6 +4,7 @@ namespace BareFields\requests;
 
 use BareFields\blueprints\abstract\AbstractBlueprint;
 use BareFields\blueprints\BlueprintsManager;
+use BareFields\fields\EnvFields;
 use BareFields\helpers\WPSHelper;
 use BareFields\multilang\Locales;
 use BareFields\multilang\Multilang;
@@ -24,6 +25,8 @@ class DocumentFilter
   const string BOOLEAN_FIELD_MARKER = "__@@";
 
   const string COMPLEX_ID_MARKER = "__%%";
+
+	const string ENV_FIELD_MARKER = "__**";
 
 	/**
 	 * Patch all "${screenName}___${fieldName}" to "$fieldName"
@@ -175,6 +178,15 @@ class DocumentFilter
 				// Not disabled, just remove the enabled value
 				unset( $node['enabled'] );
       }
+			// Convert env fields
+			if ( str_ends_with( $key, self::ENV_FIELD_MARKER ) ) {
+				$envName = EnvFields::getEnvName();
+				$rightOffset = strlen("__".$envName.self::ENV_FIELD_MARKER);
+				$newKey = substr( $key, 0, -$rightOffset );
+				$data[$newKey] = $node;
+				unset($data[$key]);
+				continue;
+			}
 			// Convert Flexible Layouts
 			if ( is_array($node) && isset($node['acf_fc_layout']) ) {
 				$node["type"] = $node['acf_fc_layout'];

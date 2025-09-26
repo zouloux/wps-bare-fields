@@ -2,11 +2,10 @@
 
 namespace BareFields\multilang;
 
+use BareFields\helpers\ACFFieldsPatcher;
 use BareFields\requests\DocumentFilter;
 use Extended\ACF\Fields\Field;
 use Extended\ACF\Fields\Group;
-use ReflectionClass;
-use ReflectionProperty;
 
 class TranslatedFields
 {
@@ -27,7 +26,7 @@ class TranslatedFields
 	public static function one ( callable $generator, string $layout = "row", string $groupFieldLabel = null, bool $toggle = true ) : Field {
     if ( !$toggle )
       return $generator();
-		$settingsProperty = _PatchedTranslatableField::patchSettingsAccessibility();
+		$settingsProperty = ACFFieldsPatcher::patchSettingsAccessibility();
 		$locales = Locales::getLocalesKeys();
 
 		$output = [];
@@ -52,7 +51,7 @@ class TranslatedFields
   public static function many ( callable $generator, string $layout = "row", bool $toggle = true ) : array {
     if ( !$toggle )
       return $generator();
-    $settingsProperty = _PatchedTranslatableField::patchSettingsAccessibility();
+    $settingsProperty = ACFFieldsPatcher::patchSettingsAccessibility();
 		$locales = Locales::getLocalesKeys();
 
     $fieldLabels = [];
@@ -92,18 +91,3 @@ class TranslatedFields
 
 }
 
-class _PatchedTranslatableField extends Field
-{
-	protected static ReflectionProperty $__accessibleSettingsProperty;
-
-	public static function patchSettingsAccessibility (): ReflectionProperty {
-		if ( !isset(self::$__accessibleSettingsProperty) ) {
-			$instance = new static("_a", "_b");
-			$reflection = new ReflectionClass($instance);
-			$property = $reflection->getProperty("settings");
-			$property->setAccessible(true);
-			self::$__accessibleSettingsProperty = $property;
-		}
-		return self::$__accessibleSettingsProperty;
-	}
-}
