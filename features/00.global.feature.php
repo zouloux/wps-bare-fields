@@ -9,6 +9,24 @@ use PHPMailer\PHPMailer\PHPMailer;
  * Global features are front, api and backend related
  */
 
+// ----------------------------------------------------------------------------- PATCH ACF HTML
+
+function bare_fields_allow_html_in_acf_labels () {
+	/**
+	 * https://support.advancedcustomfields.com/forums/topic/escaped-html-in-labels-since-acf-6-4-3/
+	 * https://www.advancedcustomfields.com/resources/html-escaping/
+	 * https://www.reddit.com/r/Wordpress/comments/1ajlo1n/acf_will_begin_escaping_html_in_the_acf_shortcode/
+	 */
+	// TODO : To WPS
+	add_filter('acf/get_field_label', fn( $label ) => html_entity_decode($label), 10);
+
+	// TODO : To test, does not work ?
+	//add_filter( 'acf/the_field/allow_unsafe_html', function( $allowed, $selector ) {
+	//    return true;
+	//    return $allowed;
+	//}, 10, 2);
+}
+
 // ----------------------------------------------------------------------------- CLEAN WP JUNK
 
 function bare_fields_feature_global_clean_junk () {
@@ -50,10 +68,24 @@ function bare_fields_feature_global_clean_junk () {
 // ----------------------------------------------------------------------------- THEME
 
 function bare_fields_feature_global_disable_theme () {
-	add_action('template_redirect', function() {
-		if ( !is_admin() )
-			exit;
+	add_action('template_redirect', function () {
+		// Allow REST API requests
+		if ( defined('REST_REQUEST') && REST_REQUEST )
+			return;
+		// Allow admin and AJAX
+		if ( is_admin() || ( defined('DOING_AJAX') && DOING_AJAX ) )
+			return;
+		// Optional: allow login/admin pages if needed
+		$uri = $_SERVER[ 'REQUEST_URI' ] ?? '';
+		if ( strpos($uri, '/wp-login.php') === 0 || strpos($uri, '/wp-admin/') === 0 )
+			return;
+		// Return 404 in JSON for frontend requests
+		wp_send_json_error([ 'status' => 'feature-disabled' ], 404);
 	});
+//	add_action('template_redirect', function() {
+//		if ( !is_admin() )
+//			exit;
+//	});
 }
 
 // ----------------------------------------------------------------------------- OEMBED
