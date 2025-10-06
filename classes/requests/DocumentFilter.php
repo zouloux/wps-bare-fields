@@ -165,19 +165,25 @@ class DocumentFilter
 				continue;
 			}
       // Remove !enabled fields
-      if ( is_array($node) && isset($node['enabled']) && !is_array($node['enabled']) ) {
-        $isEnabled = $node['enabled'];
-        $disable = $isEnabled !== "enabled" && !($isEnabled === true || WPSHelper::booleanInput($isEnabled));
-        if ( $disable ) {
+			if ( is_array($node) && isset($node[ 'enabled' ]) ) {
+				$isEnabled = $node[ 'enabled' ];
+				$disable = (
+					// enabled field is a value like true / 1 / "on"
+					!is_array($node[ 'enabled' ])
+					? ( $isEnabled !== "enabled" && !( $isEnabled === true || WPSHelper::booleanInput($isEnabled) ) )
+					// enabled field is an array of locales as strings
+					: !in_array(Locales::getCurrentLocale(), $node[ 'enabled' ])
+				);
+				if ( $disable ) {
 					// Check if it is an indexed array ( enabled field in a repeater )
 					if ( array_keys($data) === range(0, count($data) - 1) )
 						$patchIndexedArray = true;
-					unset( $data[ $key ] );
+					unset($data[ $key ]);
 					continue;
-        }
+				}
 				// Not disabled, just remove the enabled value
-				unset( $node['enabled'] );
-      }
+				unset($node[ 'enabled' ]);
+			}
 			// Convert env fields
 			if ( str_ends_with( $key, self::ENV_FIELD_MARKER ) ) {
 				$envName = EnvFields::getEnvName();

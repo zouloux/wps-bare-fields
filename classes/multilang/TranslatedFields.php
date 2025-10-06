@@ -4,6 +4,7 @@ namespace BareFields\multilang;
 
 use BareFields\helpers\ACFFieldsPatcher;
 use BareFields\requests\DocumentFilter;
+use Extended\ACF\Fields\Checkbox;
 use Extended\ACF\Fields\Field;
 use Extended\ACF\Fields\Group;
 
@@ -89,5 +90,35 @@ class TranslatedFields
     return self::one( $newGenerator, "row", $label, $toggle );
   }
 
+	// ---------------------------------------------------------------------------
+
+	public static function localeEnabled ( array $defaults = null, string $layout = "horizontal" ) {
+		if (is_null($defaults)) {
+			$defaults = [];
+			foreach ( Locales::getLocalesKeys() as $locale )
+				$defaults[] = $locale;
+		}
+		return Checkbox::make("Enabled in", "enabled")
+			->choices(Locales::getLocales())
+			->default($defaults)
+			->layout($layout);
+	}
+
+	// TODO : Finish this locale enabled based group of fields
+//	public static function localeEnabledGroups (array $fields) {
+//		$groups = [];
+//		foreach ( Locales::getLocales() as $locale ) {
+//			$groups[] = Group::make($locale, "group_$locale")
+//				->fields($fields)
+//				->conditionalLogic([
+//					ConditionalLogic::where("enabled", "==", $locale)
+//				]);
+//		}
+//		return [
+//			Checkbox::make("Enabled in locales", "enabled")
+//				->choices(Locales::getLocales()),
+//			...$groups,
+//		];
+//	}
 }
 

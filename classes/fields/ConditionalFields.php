@@ -83,7 +83,7 @@ class ConditionalFields
 		);
     $translatedLinkText = fn (bool $isInternal) => (
       $translateText
-			? TranslatedFields::table($createTextLabel($textOverrideMode, !$textOverrideMode), fn () => $linkText($isInternal) )->column(60)
+			? TranslatedFields::table($createTextLabel($textOverrideMode && $isInternal, !($textOverrideMode && $isInternal)), fn () => $linkText($isInternal) )->column(60)
 			: $linkText($isInternal)
 		);
     if ( in_array("none", $types) )
