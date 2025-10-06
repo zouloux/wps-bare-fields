@@ -102,7 +102,7 @@
 
 /* Compact labels for wide screens */
 .acf-field.compactLabels .acf-field:before,
-.acf-field.compactLabels .acf-field .acf-label {
+.acf-field.compactLabels .acf-field .acf-label:not(.acf-accordion-title) {
 	width: 14%;
 	min-width: 100px;
 	max-width: 210px;
