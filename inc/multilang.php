@@ -89,7 +89,8 @@ add_action("admin_head", function () {
 			$name = get_page_template_slug($post);
 			if ( !$name ) $name = "";
 		}
-    $blueprints = BlueprintsManager::getMatchingBlueprints($type, $name);
+//    $blueprints = BlueprintsManager::getMatchingBlueprints($type, $name);
+		$isMultilang = true;
 	}
   // Singleton
   else if ( $screen->post_type === "" ) {
@@ -107,10 +108,9 @@ add_action("admin_head", function () {
 		$isListing = false;
 	}
   // Check if any matching blueprint is multilang
-  foreach ( $blueprints as $blueprint ) {
+  foreach ( $blueprints as $blueprint )
     if ( $blueprint->getMultilang() )
       $isMultilang = true;
-  }
   // Inject locale selector in DOM with its JS
 	if ( !$isMultilang ) return;
   // Grab locales, inject "all" on post pages
@@ -184,11 +184,11 @@ add_filter('acf/validate_value', function( $valid, $value, $field ) {
 	}
   $selectedLocales = get_field('locales', $postID) ?? null;
 	if ( empty($selectedLocales) ) {
-		$adminLocale = Locales::readAdminLocale();
-		if ( $adminLocale === "all" )
+//		$adminLocale = Locales::readAdminLocale();
+//		if ( $adminLocale === "all" )
 			$selectedLocales = [ ...Locales::getLocalesKeys() ];
-		else
-			$selectedLocales = [ $adminLocale ];
+//		else
+//			$selectedLocales = [ $adminLocale ];
 	}
   if ( !is_array($selectedLocales) || empty($selectedLocales) )
     return $valid;
@@ -210,19 +210,20 @@ add_filter('acf/validate_value', function( $valid, $value, $field ) {
 
 // Enable current locale when creating a new post
 add_action('acf/load_field/key=locales', function( $field ) {
+//	\Nano\core\App::stdout($field);
 	if ( !Locales::isMultilang() ) return $field;
 	if ( !is_admin() ) return $field;
   global $post;
-  if (is_null($post))
-    return $field;
-	// If this post blueprint has all locales forced
-	$blueprints = BlueprintsManager::getMatchingBlueprintsForPost( $post );
-	$forcedAllLocales = array_filter($blueprints, fn ($b) => $b->getMultilangForceAllLocales());
-	if ( count($forcedAllLocales) > 0 ) {
-		$locales = Locales::getLocalesKeys();
-		$field['default_value'] = $locales;
-		$field['value'] = $locales;
-		return $field;
+	if ( !is_null($post) ) {
+		// If this post blueprint has all locales forced
+		$blueprints = BlueprintsManager::getMatchingBlueprintsForPost( $post );
+		$forcedAllLocales = array_filter($blueprints, fn ($b) => $b->getMultilangForceAllLocales());
+		if ( count($forcedAllLocales) > 0 ) {
+			$locales = Locales::getLocalesKeys();
+			$field['default_value'] = $locales;
+			$field['value'] = $locales;
+			return $field;
+		}
 	}
 	// By default, we select the current locale of the admin panel
 	$adminLocale = Locales::readAdminLocale();
