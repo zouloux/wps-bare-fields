@@ -100,6 +100,14 @@
 	background: cadetblue;
 }
 
+/* Compact labels for wide screens */
+.acf-field.compactLabels .acf-field:before,
+.acf-field.compactLabels .acf-field .acf-label {
+	width: 14%;
+	min-width: 100px;
+	max-width: 210px;
+}
+
 /* --- PATCH POST EDIT --- */
 #edit-slug-box {
   padding: 0;
