@@ -93,6 +93,13 @@
   padding: 0 !important;
 }
 
+/* Clean repeatable field with bigger spaces between rows */
+.acf-field.cleanRepeat > .acf-input > .acf-repeater > .acf-table {
+  border-collapse: separate;
+  border-spacing: 0 2px;
+	background: cadetblue;
+}
+
 /* --- PATCH POST EDIT --- */
 #edit-slug-box {
   padding: 0;
