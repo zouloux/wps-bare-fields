@@ -11,6 +11,8 @@ use Extended\ACF\Fields\Group;
 use Extended\ACF\Fields\PageLink;
 use Extended\ACF\Fields\Text;
 use Extended\ACF\Fields\URL;
+use Extended\ACF\Fields\Select;
+
 
 class ConditionalFields
 {
@@ -71,6 +73,7 @@ class ConditionalFields
     bool $translateText = false,
     array $internalPostTypes = ["post"],
 		bool $textOverrideMode = false,
+		array $actions = [],
   ) {
 		$createTextLabel = fn (bool $override, bool $required) => (
 			"Link text".($required ? " *" : ($override ? " override (will use page title if empty)" : ""))
@@ -129,6 +132,12 @@ class ConditionalFields
             "download" => "Download"
           ])
       ];
+		if ( count($actions) > 0 )
+			$fields["Actions"] = [
+				$translatedLinkText(false),
+				Select::make("Actions", "actions")
+					->choices($actions)
+			];
     return self::createSelector($label, $key, $fields, true, "table");
   }
 }
