@@ -60,4 +60,21 @@ class FilterHelpers
 		else
 			return $input;
 	}
+
+	/**
+	 * Clean prop from an array.
+	 * - Rename prop (ex from "generic_flexible" to "flexible")
+	 * - Uses FilterHelper::neverFalse to normalize default value
+	 * - Mutates &array refs
+	 * @param array $array Mutated array as ref
+	 * @param string $fromKey Key to grab data from
+	 * @param string $toKey Key to put normalized data to
+	 * @param mixed|null $defaultValue Default value if false / null
+	 * @return void
+	 */
+	public static function cleanKey ( array &$array, string $fromKey, string $toKey, mixed $defaultValue = null ) {
+		$value = self::neverFalse($array[$fromKey] ?? $defaultValue, $defaultValue);
+		unset($array[$fromKey]);
+		$array[$toKey] = $value;
+	}
 }
