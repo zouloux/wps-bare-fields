@@ -135,7 +135,7 @@ class ConditionalFields
 		if ( count($actions) > 0 )
 			$fields["Actions"] = [
 				$translatedLinkText(false),
-				Select::make("Actions", "actions")
+				Select::make("Actions", "action")
 					->choices($actions)
 			];
     return self::createSelector($label, $key, $fields, true, "table");
