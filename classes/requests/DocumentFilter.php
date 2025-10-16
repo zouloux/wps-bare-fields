@@ -167,29 +167,33 @@ class DocumentFilter
 			// Remove !enabled fields
 			if ( is_array($node) && isset($node["enabled"]) ) {
 				$isEnabled = $node["enabled"];
-				$disable = (
-					// enabled field is a value like true / 1 / "on"
-					!is_array($node["enabled"])
-					? ( $isEnabled !== "enabled" && !( $isEnabled === true || WPSHelper::booleanInput($isEnabled) ) )
-					// enabled field is an array of locales as strings
-					: (
-						// Multilang has to be enabled
-						Locales::isMultilang()
-						// The array has to be indexed [0 => "fr", ...] otherwise it's something else
-						&& array_values( $node["enabled"] ) === $node["enabled"]
-						// Check if current locale is enabled
-						&& !in_array(Locales::getCurrentLocale(), $node["enabled"])
-					)
-				);
-				if ( $disable ) {
+				$disabled = false;
+				if ( !is_array($node["enabled"]) ) {
+					$disabled = (
+						$isEnabled !== "enabled"
+						&& !( $isEnabled === true || WPSHelper::booleanInput($isEnabled) )
+					);
+					// Not disabled, just remove the enabled value
+					if (!$disabled) {
+						unset($node["enabled"]);
+					}
+				}
+				else if (
+					// Multilang has to be enabled
+					Locales::isMultilang()
+					// The array has to be indexed [0 => "fr", ...] otherwise it's something else
+					&& array_values( $node["enabled"] ) === $node["enabled"]
+				) {
+					// Check if current locale is enabled
+					$disabled = !in_array(Locales::getCurrentLocale(), $node["enabled"]);
+				}
+				if ( $disabled ) {
 					// Check if it is an indexed array ( enabled field in a repeater )
 					if ( array_keys($data) === range(0, count($data) - 1) )
 						$patchIndexedArray = true;
-					unset($data[ $key ]);
+					unset($data[$key]);
 					continue;
 				}
-				// Not disabled, just remove the enabled value
-				unset($node["enabled"]);
 			}
 			// Convert env fields
 			if ( str_ends_with( $key, self::ENV_FIELD_MARKER ) ) {
