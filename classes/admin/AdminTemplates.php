@@ -163,6 +163,7 @@ class AdminTemplates
 							$style = "width: {$w}px;";
 						}
 						// Sorting helpers
+						$canOrder = false;
 						if ( $isOrderable ) {
 							$canOrder = !empty($orderableColumns[$index]) && is_string($orderableColumns[$index]);
 							$currentOrderBy = $_GET['order-by'] ?? "";
