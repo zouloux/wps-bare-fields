@@ -68,8 +68,8 @@ class AdminTemplates
 	static function showError ( string $message ) {
 		?>
 		<div class="wrap"><h1>
-				<?php echo htmlentities($message); ?>
-			</h1></div>
+			<?php echo htmlentities($message); ?>
+		</h1></div>
 		<?php
 	}
 
@@ -187,12 +187,12 @@ class AdminTemplates
 		?>
 		<div class="AdminPaginate">
 		<div class="AdminPaginate_container">
-			<?php if ( $pageIndex > 0 ) : ?>
+			<?php if ( $totalPages > 1 ) : ?>
 				<?php for ( $i = 0; $i < $totalPages; ++$i ) : ?>
 					<?php
-					$currentUrl = $_SERVER["REQUEST_URI"];
-					$pageUrl = remove_query_arg('page-index', $currentUrl);
-					$pageUrl = add_query_arg('page-index', $i, $pageUrl);
+						$currentUrl = $_SERVER["REQUEST_URI"];
+						$pageUrl = remove_query_arg('page-index', $currentUrl);
+						$pageUrl = add_query_arg('page-index', $i, $pageUrl);
 					?>
 					<a
 						class="button <?php echo ( $i == $pageIndex ) ? 'button-primary' : ''; ?>"
@@ -204,10 +204,10 @@ class AdminTemplates
 			<?php endif; ?>
 			<div class="AdminPaginate_more">
 				<?php
-				$itemsPerPage = 20; // Default items per page
-				$startItem = ( $pageIndex * $itemsPerPage ) + 1;
-				$endItem = min(( $pageIndex + 1 ) * $itemsPerPage, $totalCount);
-				echo "{$startItem}-{$endItem} of {$totalCount} items";
+					$itemsPerPage = 20; // Default items per page
+					$startItem = ( $pageIndex * $itemsPerPage ) + 1;
+					$endItem = min(( $pageIndex + 1 ) * $itemsPerPage, $totalCount);
+					echo "{$startItem}-{$endItem} of {$totalCount} items";
 				?>
 			</div>
 		</div>
@@ -219,7 +219,7 @@ class AdminTemplates
 			$paginate["totalPages"] ?? 0,
 			$paginate["totalCount"] ?? 0,
 			$paginate["pageIndex"] ?? 0
-			);
+		);
 	}
 
 	/**
