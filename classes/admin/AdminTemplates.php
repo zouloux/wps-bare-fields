@@ -54,6 +54,8 @@ class AdminTemplates
 		$id = empty($_GET[ 'id' ]) ? -1 : intval($_GET[ 'id' ]);
 		$query = trim(stripslashes($_GET[ 'query' ] ?? ""));
 		$pageIndex = intval($_GET[ 'page-index' ] ?? "0");
+		$orderBy = $_GET['order-by'] ?? "updated_at";
+		$orderDirection = $_GET['order-dir'] ?? "desc";
 		// Connected user
 		$user = wp_get_current_user();
 		//
@@ -62,6 +64,8 @@ class AdminTemplates
 			"query" => $query,
 			"pageIndex" => $pageIndex,
 			"user" => $user,
+			"orderBy" => $orderBy,
+			"orderDirection" => $orderDirection,
 		];
 	}
 
@@ -142,8 +146,11 @@ class AdminTemplates
 	 * @param callable $renderRow
 	 * @param array $header - Array of strings for the table headers
 	 * @param array|null $columnWidths - Optional array of numbers for column widths
+	 * @param array|null $orderableColumns - Optional array of strings (column name in db) matching headers to enable ordering per column
 	 */
-	static function renderTableList ( array $rows, callable $renderRow, array $header, ?array $columnWidths = null ) {
+	static function renderTableList ( array $rows, callable $renderRow, array $header, ?array $columnWidths = null, ?array $orderableColumns = null ) {
+		$isOrderable = is_array($orderableColumns);
+		$orderSymbols = [ "asc" => "▲", "desc" => "▼" ];
 		?>
 		<table class="widefat fixed striped AdminTable">
 			<thead>
@@ -151,13 +158,42 @@ class AdminTemplates
 				<?php foreach ( $header as $index => $headerItem ): ?>
 					<?php
 						$style = "";
-						if ( isset($columnWidths) && $columnWidths[ $index ] > 0 ) {
+						if ( isset($columnWidths) && isset($columnWidths[$index]) && $columnWidths[ $index ] > 0 ) {
 							$w = $columnWidths[ $index ];
 							$style = "width: {$w}px;";
 						}
+						// Sorting helpers
+						if ( $isOrderable ) {
+							$canOrder = !empty($orderableColumns[$index]) && is_string($orderableColumns[$index]);
+							$currentOrderBy = $_GET['order-by'] ?? "";
+							$currentOrderDir = $_GET['order-dir'] ?? "";
+							$isCurrent = $canOrder && !is_null($currentOrderBy) && $currentOrderBy === $orderableColumns[$index];
+							$dirSymbol = $isCurrent ? " ".($orderSymbols[$currentOrderDir] ?? "") : "";
+							// Build toggle URL
+							$href = '';
+							if ( $canOrder ) {
+								$currentUrl = $_SERVER['REQUEST_URI'];
+								// Reset page index when changing sort
+								$url = remove_query_arg([ 'order-by', 'order-dir', 'page-index' ], $currentUrl);
+								$nextDir = 'asc';
+								if ( $isCurrent )
+									$nextDir = ($currentOrderDir === 'asc') ? 'desc' : 'asc';
+								$url = add_query_arg('order-by', $orderableColumns[$index], $url);
+								$url = add_query_arg('order-dir', $nextDir, $url);
+								$href = $url;
+							}
+						}
 					?>
 					<th style="<?php echo $style ?>">
-						<?php echo $headerItem; ?>
+						<?php if ( $canOrder ): ?>
+							<a href="<?php echo esc_attr($href); ?>" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+								<span><?php echo $headerItem; ?></span><span style="opacity: 0.7; font-size: 11px;">
+									<?php echo $dirSymbol; ?>
+								</span>
+							</a>
+						<?php else: ?>
+							<?php echo $headerItem; ?>
+						<?php endif; ?>
 					</th>
 				<?php endforeach; ?>
 			</tr>
@@ -178,11 +214,11 @@ class AdminTemplates
 
 	/**
 	 * Paginate
-	 * @param int $totalPages - The total number of pages
 	 * @param int $totalCount - The total count of items
+	 * @param int $totalPages - The total number of pages
 	 * @param int $pageIndex - The current page index
 	 */
-	static function renderPaginate ( int $totalPages, int $totalCount, int $pageIndex )
+	static function renderPaginate ( int $totalCount, int $totalPages, int $pageIndex )
 	{
 		?>
 		<div class="AdminPaginate">
@@ -216,9 +252,9 @@ class AdminTemplates
 
 	static function renderPaginateAuto ( array $paginate ) {
 		self::renderPaginate(
-			$paginate["totalPages"] ?? 0,
-			$paginate["totalCount"] ?? 0,
-			$paginate["pageIndex"] ?? 0
+			$paginate["count"] ?? 0,
+			$paginate["total"] ?? 0,
+			$paginate["current"] ?? 0
 		);
 	}
 
