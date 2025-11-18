@@ -3,6 +3,7 @@
 namespace BareFields\admin;
 
 use BareFields\helpers\AdminHelper;
+use BareFields\requests\DocumentRequest;
 
 class AdminTemplates
 {
@@ -485,4 +486,62 @@ class AdminTemplates
 		</script>
 		<?php
 	}
+
+	// ---------------------------------------------------------------------------
+
+	static function getDocumentEditLink ( int $id, string $title ) {
+		return '<a href="post.php?post='.$id.'&action=edit">'.$title.'</a>';
+	}
+
+	static function getEditLink ( string $controllerName, int $id ) {
+		return admin_url('admin.php?page='.esc_attr($controllerName).'&id='.esc_attr($id));
+	}
+
+	// ---
+
+	static function formatDate ( $timestamp, $includeHours = false ) {
+		$format = $includeHours ? 'd-m-Y / H:i:s' : 'd-m-Y';
+		return date($format, $timestamp);
+	}
+
+	static function renderColoredSpan ( string $status, string $color, $bold = false ) {
+		$boldStyle = $bold ? 'font-weight: bold;' : '';
+		$style = sprintf( 'color: %s; %s', $color, $boldStyle );
+		return sprintf('<span style="%s">%s</span>', $style, $status);
+	}
+
+	// ---
+
+	static function renderErrorStatus ( string $status, $bold = false ) {
+		return self::renderColoredSpan($status, "red", $bold);
+	}
+
+	static function renderWarningStatus ( string $status, $bold = false ) {
+		return self::renderColoredSpan($status, "orange", $bold);
+	}
+
+	static function renderSuccessStatus ( string $status, $bold = false ) {
+		return self::renderColoredSpan($status, "#32CD32", $bold);
+	}
+
+	// ---
+
+	static function renderStatus (string $status) {
+		if ( $status === "active" )
+			return self::renderSuccessStatus($status, true);
+		else if ( $status === "inactive" )
+			return self::renderErrorStatus($status, true);
+		else if ( $status === "waiting" )
+			return self::renderWarningStatus($status, true);
+		else
+		return "<span>".htmlentities($status)."</span>";
+	}
+
+	static function renderBooleanStatus ( mixed $boolean, $yes = "Yes", $no = "No", $invertColors = false ) {
+		if ( $boolean )
+			return $invertColors ? self::renderErrorStatus($yes, true) : self::renderSuccessStatus($yes, true);
+		else
+			return $invertColors ? self::renderSuccessStatus($no, true) : self::renderErrorStatus($no, true);
+	}
+
 }
