@@ -99,7 +99,8 @@ class Document {
    */
   public function getField ( string $path ) {
     // fixme : maybe use acf key finder here ?
-    $path = DocumentFilter::SCREEN_NAME_MARKER.str_replace(".", "_", $path);
+		$prefix = $this->type === "collection" ? $this->name : "";
+    $path = $prefix.DocumentFilter::SCREEN_NAME_MARKER.str_replace(".", "_", $path);
     $value = get_field($path, $this->id);
     if ( acf_is_field_key( $value ) )
       return get_field($value, $this->id);
