@@ -466,6 +466,13 @@ function bare_fields_feature_admin_enable_doc_file_upload () {
 	});
 }
 
+function bare_fields_feature_admin_enable_zip_file_upload () {
+	add_filter('upload_mimes', function ($mimes) {
+		$mimes['zip']  = 'application/zip';
+		return $mimes;
+	});
+}
+
 // ----------------------------------------------------------------------------- ANALYTICS BUTTON
 
 function bare_fields_feature_enable_analytics_button ( string $href ) {
