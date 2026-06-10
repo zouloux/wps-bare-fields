@@ -172,15 +172,17 @@ class BlueprintsManager {
       $fields = (
         // If rawFields is enabled, directly show fields without parent group
         $groupOptions['rawFields']
-        ? array_map( fn ($field) => $field->get(), $groupOptions['fields'] )
+        ? array_map( fn ($field) => self::toExtendedAcfArray($field, $rootGroupKey), $groupOptions['fields'] )
         // By default, show fields inside a nameless group
         : [
           // We use the unique key here to avoid collisions
-          Group::make(" ", $key) // keep space in label
-            ->layout('row')
-            ->helperText( $groupOptions['instructions'] )
-            ->fields( $groupOptions['fields'] )
-            ->get()
+          self::toExtendedAcfArray(
+            Group::make(" ", $key) // keep space in label
+              ->layout('row')
+              ->helperText( $groupOptions['instructions'] )
+              ->fields( $groupOptions['fields'] ),
+            $rootGroupKey
+          )
         ]
       );
 			// Register this field group
@@ -192,7 +194,7 @@ class BlueprintsManager {
 				'menu_order' => $groupPosition,
 				'style' => $groupOptions["seamless"] ? "seamless" : "default",
 				// Attach to document locations
-				'location' => array_map( fn (Location $location) => $location->get(), $blueprint->location ),
+				'location' => array_map( fn (Location $location) => self::toExtendedAcfArray($location), $blueprint->location ),
 				'fields' => $fields,
 			]);
 		}
@@ -360,7 +362,20 @@ class BlueprintsManager {
     foreach ( $blueprints as $blueprint )
       $locations = [ ...$locations, ...$blueprint->location ];
     /** @var $l Location */
-    return array_map(fn ($l) => $l->get(), $locations );
+    return array_map(fn ($l) => self::toExtendedAcfArray($l), $locations );
+  }
+
+  /**
+   * Convert Extended ACF objects across old get() and current toArray() APIs.
+   */
+  protected static function toExtendedAcfArray ( object $object, ?string $parentKey = null ) : array {
+    if ( method_exists($object, 'toArray') ) {
+      return is_null($parentKey) ? $object->toArray() : $object->toArray($parentKey);
+    }
+    if ( method_exists($object, 'get') ) {
+      return $object->get();
+    }
+    throw new \BadMethodCallException('Unsupported Extended ACF object '.get_class($object));
   }
 
   /**
