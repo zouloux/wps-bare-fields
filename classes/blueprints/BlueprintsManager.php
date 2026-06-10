@@ -124,11 +124,12 @@ class BlueprintsManager {
      * PAGES OR POSTS BLUEPRINT
      */
     else if ( $blueprint instanceof PageBlueprint || $blueprint instanceof PostBlueprint ) {
+      $postType = $blueprint instanceof PostBlueprint ? "post" : "page";
       // Remove Wysiwyg editor
       if ( !$blueprint->getEditor() )
-        AdminHelper::removeFieldForPost("page", "editor");
+        AdminHelper::removeFieldForPost($postType, "editor");
       if ( !$blueprint->getExcerpt() )
-        AdminHelper::removeFieldForPost("page", "excerpt");
+        AdminHelper::removeFieldForPost($postType, "excerpt");
       // All posts
       if ( $blueprint instanceof PostBlueprint ) {
         $blueprint->location[] = Location::where("post_type", "==", "post");
