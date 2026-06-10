@@ -312,7 +312,7 @@ class BlueprintsManager {
    * @return AbstractBlueprint[]
    * @throws \Exception
    */
-  static function getMatchingBlueprints ( string $type, string $name = null, string $blueprintID = null ) : array {
+  static function getMatchingBlueprints ( string $type, ?string $name = null, ?string $blueprintID = null ) : array {
     if ( !in_array($type, ["post", "page", "collection", "singleton"]) ) {
       throw new \Exception("Invalid type $type");
     }

@@ -35,7 +35,7 @@ class FilterHelpers
 	 * @param string|null $keyName
 	 * @return array
 	 */
-	public static function idToParent ( array &$array, string $keyName = null ) {
+	public static function idToParent ( array &$array, ?string $keyName = null ) {
 		$output = [];
 		foreach ( $array as $item ) {
 			$id = $item["id"];

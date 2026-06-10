@@ -67,7 +67,7 @@ class RootGroup
 		return $this;
 	}
 
-  public function position ( int $position = null ) {
+  public function position ( ?int $position = null ) {
     $this->_groupData['position'] = $position;
     return $this;
   }

@@ -148,7 +148,7 @@ class AdminHelper
     echo '</div>';
   }
 
-  public static function adminCustomPostboxPage ( string $title, callable $afterTitle = null, $oneColumn = false ) {
+  public static function adminCustomPostboxPage ( string $title, ?callable $afterTitle = null, $oneColumn = false ) {
     echo '<div class="wrap">';
     echo '	<h1>'.esc_html( $title ).'</h1>';
     echo '	<div id="poststuff">';
@@ -158,7 +158,7 @@ class AdminHelper
     echo '			<div id="postbox-container-1" class="postbox-container">';
 
     $isSidebar = false;
-    return function ( string $column, callable $callback = null, string $title = "", array $arguments = [] ) use ( &$isSidebar ) {
+    return function ( string $column, ?callable $callback = null, string $title = "", array $arguments = [] ) use ( &$isSidebar ) {
       if ( $column === "end" ) {
         echo '			</div>';
         echo '		</div>';

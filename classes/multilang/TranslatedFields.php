@@ -24,7 +24,7 @@ class TranslatedFields
     ]);
   }
 
-	public static function one ( callable $generator, string $layout = "row", string $groupFieldLabel = null, bool $toggle = true ) : Field {
+	public static function one ( callable $generator, string $layout = "row", ?string $groupFieldLabel = null, bool $toggle = true ) : Field {
     if ( !$toggle )
       return $generator();
 		$settingsProperty = ACFFieldsPatcher::patchSettingsAccessibility();
@@ -92,7 +92,7 @@ class TranslatedFields
 
 	// ---------------------------------------------------------------------------
 
-	public static function localeEnabled ( array $defaults = null, string $layout = "horizontal" ) {
+	public static function localeEnabled ( ?array $defaults = null, string $layout = "horizontal" ) {
 		if (is_null($defaults)) {
 			$defaults = [];
 			foreach ( Locales::getLocalesKeys() as $locale )
@@ -121,4 +121,3 @@ class TranslatedFields
 //		];
 //	}
 }
-

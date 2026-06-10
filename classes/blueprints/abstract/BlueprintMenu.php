@@ -19,7 +19,7 @@ trait BlueprintMenu
   public function getMenuPosition () : int|null { return $this->_menuPosition; }
 
   // https://developer.wordpress.org/resource/dashicons/
-  public function menu ( string $title, string $label = null, string $icon = "", int|null $position = null ) : static {
+  public function menu ( string $title, ?string $label = null, string $icon = "", int|null $position = null ) : static {
     $this->_menuTitle = $title;
     $this->_menuLabel = $label ?? $title;
     $this->_menuIcon   = $icon;
