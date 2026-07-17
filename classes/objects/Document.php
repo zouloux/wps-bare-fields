@@ -64,7 +64,7 @@ class Document {
 		if ( !empty($this->href) && defined('WP_CONTENT_URL') )
       $this->href = WPSHelper::removeBaseFromHref( $this->href, WP_CONTENT_URL );
 		// Add locale if multilang
-		if ( Locales::isMultilang() ) {
+		if ( Locales::isMultilang() && Locales::shouldPrefixUrlsWithLocale() ) {
 			if ( str_starts_with($this->href, "/") ) {
 				$this->href = "/".Locales::getCurrentLocale().$this->href;
 			}

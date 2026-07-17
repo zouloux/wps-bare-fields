@@ -7,6 +7,7 @@ class Locales {
 	// --------------------------------------------------------------------------- DEFINE LOCALES
 
 	protected static array $__locales = [];
+	protected static bool $__prefixUrlsWithLocale = true;
 
 	public static function setLocales ( array $locales ) {
 		self::$__locales = $locales;
@@ -27,6 +28,14 @@ class Locales {
   public static function isMultilang () : bool {
     return count(self::getLocalesKeys()) > 0;
   }
+
+	public static function setPrefixUrlsWithLocale ( bool $enabled ) {
+		self::$__prefixUrlsWithLocale = $enabled;
+	}
+
+	public static function shouldPrefixUrlsWithLocale () : bool {
+		return self::$__prefixUrlsWithLocale;
+	}
 
 	// --------------------------------------------------------------------------- CURRENT LOCALE
   // For non admin only
@@ -78,4 +87,3 @@ class Locales {
     update_user_meta( $currentUserId, 'locale', $locale );
 	}
 }
-

@@ -239,7 +239,7 @@ class DocumentFilter
 					$node["href"] = WPSHelper::removeBaseFromHref($node["href"], WPSHelper::getBase());
 				}
 				// Insert locale in links
-				if ( Locales::isMultilang() && !empty($node["href"]) ) {
+				if ( Locales::isMultilang() && Locales::shouldPrefixUrlsWithLocale() && !empty($node["href"]) ) {
 					// If href is relative, simply prepend
 					if ( str_starts_with($node["href"], "/")) {
 						$node["href"] = "/".Locales::getCurrentLocale().$node["href"];
