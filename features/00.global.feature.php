@@ -190,6 +190,21 @@ function bare_fields_feature_global_disable_wp_json () {
 	});
 }
 
+// Require authentication for REST batch requests.
+function bare_fields_feature_global_require_auth_for_wp_json_batch () {
+	add_filter('rest_pre_dispatch', function ( $result, $server, $request ) {
+		if ( !is_user_logged_in() && '/batch/v1' === strtolower(untrailingslashit($request->get_route())) ) {
+			return new WP_Error(
+				'rest_batch_authentication_required',
+				'Authentication is required to use the batch API.',
+				[ 'status' => 401 ]
+			);
+		}
+
+		return $result;
+	}, -1000, 3);
+}
+
 // Move wp-json origin.
 // Should be something like "backend/wp-json" to work
 function bare_fields_feature_global_move_wp_json_origin ( $origin ) {
