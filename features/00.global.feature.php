@@ -202,7 +202,7 @@ function bare_fields_feature_global_require_auth_for_wp_json_batch () {
 		}
 
 		return $result;
-	}, -1000, 3);
+	}, 1000, 3);
 }
 
 // Move wp-json origin.
