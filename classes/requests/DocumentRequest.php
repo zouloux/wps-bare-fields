@@ -270,30 +270,153 @@ class DocumentRequest {
 
   // --------------------------------------------------------------------------- DEEP SEARCH
 
-	static function deepFieldsSearch ( string $searchTerm, string $postType = 'post', string $postStatus = 'publish' ) {
-    // todo : add profile
+	protected static function registerSearchNormalizeFunction () : bool {
+		$pdo = $GLOBALS['@pdo'] ?? null;
+		if ( !is_object($pdo) )
+			return false;
+		$callback = static fn ($value) => strtolower(remove_accents((string) $value));
+		if ( method_exists($pdo, 'createFunction') )
+			$pdo->createFunction('wps_normalize_search', $callback, 1);
+		else if ( method_exists($pdo, 'sqliteCreateFunction') )
+			$pdo->sqliteCreateFunction('wps_normalize_search', $callback, 1);
+		else
+			return false;
+		return true;
+	}
+
+	protected static function buildDeepFieldsSearchQuery (
+		string $searchTerm,
+		string $postType,
+		string $postStatus,
+		array $options,
+		bool $count = false,
+	) :? array {
+		global $wpdb;
+		$options = array_replace([
+			'columns' => ['post_title'],
+			'searchMeta' => true,
+			'taxonomies' => ['category'],
+			'normalizeAccents' => false,
+			'page' => null,
+			'size' => null,
+			'orderBy' => null,
+			'order' => 'DESC',
+		], $options);
+
+		$allowedColumns = ['post_title', 'post_name', 'post_excerpt', 'post_content'];
+		$columns = is_array($options['columns'])
+			? array_values(array_intersect($options['columns'], $allowedColumns))
+			: [];
+		$taxonomies = is_array($options['taxonomies'])
+			? array_values(array_filter($options['taxonomies'], 'is_string'))
+			: [];
+		$normalize = $options['normalizeAccents'] && self::registerSearchNormalizeFunction();
+		if ( $options['normalizeAccents'] )
+			$searchTerm = strtolower(remove_accents($searchTerm));
+		$like = '%' . $wpdb->esc_like($searchTerm) . '%';
+		$normalizeColumn = static fn ($column) => $normalize ? "wps_normalize_search($column)" : $column;
+
+		$conditions = [];
+		$params = [$postType, $postStatus];
+		foreach ( $columns as $column ) {
+			$conditions[] = $normalizeColumn("p.$column").' LIKE %s';
+			$params[] = $like;
+		}
+		if ( $options['searchMeta'] ) {
+			$conditions[] = $normalizeColumn('pm.meta_value').' LIKE %s';
+			$params[] = $like;
+		}
+		if ( !empty($taxonomies) ) {
+			$taxonomyPlaceholders = implode(', ', array_fill(0, count($taxonomies), '%s'));
+			$conditions[] = "(tt.taxonomy IN ($taxonomyPlaceholders) AND ".$normalizeColumn('t.name').' LIKE %s)';
+			$params = [...$params, ...$taxonomies, $like];
+		}
+		if ( empty($conditions) )
+			return null;
+
+		$joins = '';
+		if ( $options['searchMeta'] )
+			$joins .= "\nLEFT JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id";
+		if ( !empty($taxonomies) ) {
+			$joins .= "\nLEFT JOIN {$wpdb->term_relationships} AS tr ON p.ID = tr.object_id";
+			$joins .= "\nLEFT JOIN {$wpdb->term_taxonomy} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id";
+			$joins .= "\nLEFT JOIN {$wpdb->terms} AS t ON tt.term_id = t.term_id";
+		}
+
+		$select = $count ? 'COUNT(DISTINCT p.ID)' : 'DISTINCT p.*';
+		$sql = "SELECT $select
+			FROM {$wpdb->posts} AS p$joins
+			WHERE p.post_type = %s
+				AND p.post_status = %s
+				AND (".implode("\n\t\t\t\t\tOR ", $conditions).')';
+
+		if ( !$count ) {
+			$allowedOrderColumns = ['ID', 'post_date', 'post_modified', 'post_title', 'post_name', 'menu_order'];
+			if ( in_array($options['orderBy'], $allowedOrderColumns, true) ) {
+				$order = strtoupper((string) $options['order']) === 'ASC' ? 'ASC' : 'DESC';
+				$sql .= " ORDER BY p.{$options['orderBy']} $order";
+			}
+			$size = is_numeric($options['size']) ? max(1, (int) $options['size']) : null;
+			if ( !is_null($size) ) {
+				$page = is_numeric($options['page']) ? max(1, (int) $options['page']) : 1;
+				$sql .= ' LIMIT %d OFFSET %d';
+				$params[] = $size;
+				$params[] = ($page - 1) * $size;
+			}
+		}
+
+		return [$sql, $params];
+	}
+
+	static function deepFieldsSearch (
+		string $searchTerm,
+		string $postType = 'post',
+		string $postStatus = 'publish',
+		array $options = [],
+	) : array {
 		// FIXME : What about other locale fields ?
 		global $wpdb;
-		$like = '%' . $wpdb->esc_like( $searchTerm ) . '%';
-		$sql = $wpdb->prepare(
-			"SELECT DISTINCT p.*
-				FROM {$wpdb->posts} AS p
-				LEFT JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
-				LEFT JOIN {$wpdb->term_relationships} AS tr ON p.ID = tr.object_id
-				LEFT JOIN {$wpdb->term_taxonomy} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-				LEFT JOIN {$wpdb->terms} AS t ON tt.term_id = t.term_id
-				WHERE p.post_type = %s
-					AND p.post_status = %s
-					AND (
-						p.post_title LIKE %s
-						OR pm.meta_value LIKE %s
-						OR ( tt.taxonomy = 'category' AND t.name LIKE %s )
-					)
-			",
-			$postType, $postStatus, $like, $like, $like
-		);
-    // fixme : return documents
-		return $wpdb->get_results( $sql );
+		// Keep the original query untouched for projects relying on the legacy behavior.
+		if ( empty($options) ) {
+			$like = '%' . $wpdb->esc_like( $searchTerm ) . '%';
+			$sql = $wpdb->prepare(
+				"SELECT DISTINCT p.*
+					FROM {$wpdb->posts} AS p
+					LEFT JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
+					LEFT JOIN {$wpdb->term_relationships} AS tr ON p.ID = tr.object_id
+					LEFT JOIN {$wpdb->term_taxonomy} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+					LEFT JOIN {$wpdb->terms} AS t ON tt.term_id = t.term_id
+					WHERE p.post_type = %s
+						AND p.post_status = %s
+						AND (
+							p.post_title LIKE %s
+							OR pm.meta_value LIKE %s
+							OR ( tt.taxonomy = 'category' AND t.name LIKE %s )
+						)
+				",
+				$postType, $postStatus, $like, $like, $like
+			);
+			return $wpdb->get_results( $sql );
+		}
+		$query = self::buildDeepFieldsSearchQuery($searchTerm, $postType, $postStatus, $options);
+		if ( is_null($query) )
+			return [];
+		[$sql, $params] = $query;
+		return $wpdb->get_results($wpdb->prepare($sql, ...$params));
+	}
+
+	static function countDeepFieldsSearch (
+		string $searchTerm,
+		string $postType = 'post',
+		string $postStatus = 'publish',
+		array $options = [],
+	) : int {
+		global $wpdb;
+		$query = self::buildDeepFieldsSearchQuery($searchTerm, $postType, $postStatus, $options, true);
+		if ( is_null($query) )
+			return 0;
+		[$sql, $params] = $query;
+		return (int) $wpdb->get_var($wpdb->prepare($sql, ...$params));
 	}
 
   // --------------------------------------------------------------------------- PUBLISH SCHEDULED POSTS
