@@ -70,15 +70,12 @@ class Locales {
 
   public static function readAdminLocale ( bool $allowAll = true ) : string {
 		if ( !is_admin() ) return "";
+		$locales = self::getLocalesKeys();
+		if ( empty($locales) ) return "";
     $currentUserId = get_current_user_id();
     $locale = get_user_meta($currentUserId, 'locale', true);
-    if ( !$allowAll && $locale === "all" )
-      return self::getDefaultLocaleKey();
-    return (
-      empty($locale)
-      ? self::getDefaultLocaleKey()
-      : $locale
-    );
+		if ( $allowAll && $locale === "all" ) return "all";
+		return in_array($locale, $locales, true) ? $locale : $locales[0];
   }
 
 	public static function writeAdminLocale ( string $locale ) {
