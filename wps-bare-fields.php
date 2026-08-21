@@ -10,7 +10,7 @@
  * License URI:       https://opensource.org/licenses/MIT
  * Text Domain:       Bare Fields
  * Domain Path:       /cms
- * Version:           0.13.2
+ * Version:           0.13.3
  * Copyright:         © 2024 Alexis Bouhet
  */
 
@@ -25,6 +25,7 @@ require __DIR__.'/vendor/autoload.php';
 
 use BareFields\blueprints\BlueprintsManager;
 use BareFields\helpers\AdminHelper;
+use BareFields\helpers\PreviewHelper;
 
 add_action('init', function () {
 	BlueprintsManager::install();
@@ -51,3 +52,5 @@ require_once __DIR__."/features/01.admin.feature.php";
 require_once __DIR__."/features/02.media-manage.feature.php";
 require_once __DIR__."/features/03.cache.feature.php";
 
+if ( !is_null(PreviewHelper::getSecret()) )
+	bare_fields_feature_add_signed_preview_parameter();

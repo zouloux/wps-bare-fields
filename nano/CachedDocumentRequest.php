@@ -1,8 +1,10 @@
 <?php
 
+use BareFields\helpers\PreviewHelper;
 use BareFields\multilang\Locales;
 use BareFields\requests\DocumentFilter;
 use BareFields\requests\DocumentRequest;
+use Nano\core\App;
 use Nano\core\Loader;
 use Nano\helpers\Cache;
 
@@ -11,6 +13,31 @@ class CachedDocumentRequest {
 
 	public static function cache ():Cache {
 		return Cache::getInstance("documents");
+	}
+
+	public static function resolvePreviewPostID ( mixed $preview = null ): ?int {
+		$preview ??= $_GET[PreviewHelper::QUERY_KEY] ?? null;
+		if ( is_null($preview) )
+			return null;
+		$postID = PreviewHelper::getPostID($preview);
+		if ( $postID === false ) {
+			App::text("Not found", 404);
+			exit;
+		}
+		Loader::loadWordpress();
+		if ( !is_user_logged_in() || !current_user_can("manage_options") ) {
+			App::text("Forbidden", 403);
+			exit;
+		}
+		$post = get_post($postID);
+		if ( is_null($post) || !in_array($post->post_type, ["post", "page"], true) ) {
+			App::text("Not found", 404);
+			exit;
+		}
+		Cache::createInstance("documents", "none");
+		header("Cache-Control: private, no-store, max-age=0");
+		header("X-Robots-Tag: noindex, nofollow");
+		return $postID;
 	}
 
   // --------------------------------------------------------------------------- MISC
@@ -70,15 +97,15 @@ class CachedDocumentRequest {
     });
   }
 
-  public static function getDocumentByID ( int|string $postID, int $fetchFields = 0, string $locale = "" ) {
-    $cacheKey = "documentByID_{$locale}_{$fetchFields}__$postID";
-    return self::cache()->define($cacheKey, function () use ( $postID, $fetchFields, $locale ) {
-      Loader::loadWordpress();
-      if ( !empty( $locale ) )
-        Locales::setCurrentLocale( $locale );
-      $document = DocumentRequest::getDocumentByID( $postID, $fetchFields );
-      return DocumentFilter::recursiveSerialize( $document, $fetchFields );
-    });
+  public static function getDocumentByID ( int|string $postID, int $fetchFields = 0, string $locale = "", bool $onlyPublished = true ) {
+		$cacheKey = "documentByID_{$locale}_{$fetchFields}_{$onlyPublished}__$postID";
+		return self::cache()->define($cacheKey, function () use ( $postID, $fetchFields, $locale, $onlyPublished ) {
+			Loader::loadWordpress();
+			if ( !empty( $locale ) )
+				Locales::setCurrentLocale( $locale );
+			$document = DocumentRequest::getDocumentByID( $postID, $fetchFields, $onlyPublished );
+			return DocumentFilter::recursiveSerialize( $document, $fetchFields );
+		});
   }
 
   // --------------------------------------------------------------------------- PAGE

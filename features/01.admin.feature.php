@@ -2,6 +2,7 @@
 
 
 use BareFields\helpers\AdminHelper;
+use BareFields\helpers\PreviewHelper;
 use BareFields\helpers\WPSHelper;
 use Nano\core\Env;
 
@@ -391,11 +392,10 @@ function bare_fields_feature_add_preview_parameter ( string $key, string $value 
 	});
 }
 
-function bare_fields_feature_add_signed_preview_parameter ( string $secret, string $key = "preview" ) {
+function bare_fields_feature_add_signed_preview_parameter ( ?string $secret = null, string $key = PreviewHelper::QUERY_KEY ) {
 	add_filter('preview_post_link', function ( $link, $post ) use ( $secret, $key )  {
-		$postID = (string) $post->ID;
-		$signature = hash_hmac("sha256", $postID, $secret);
-		return add_query_arg($key, "$postID.$signature", $link);
+		$token = PreviewHelper::createToken($post->ID, $secret);
+		return is_null($token) ? $link : add_query_arg($key, $token, $link);
 	}, 10, 2);
 }
 
