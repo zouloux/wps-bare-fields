@@ -391,6 +391,14 @@ function bare_fields_feature_add_preview_parameter ( string $key, string $value 
 	});
 }
 
+function bare_fields_feature_add_signed_preview_parameter ( string $secret, string $key = "preview" ) {
+	add_filter('preview_post_link', function ( $link, $post ) use ( $secret, $key )  {
+		$postID = (string) $post->ID;
+		$signature = hash_hmac("sha256", $postID, $secret);
+		return add_query_arg($key, "$postID.$signature", $link);
+	}, 10, 2);
+}
+
 function bare_fields_feature_disable_preview_button () {
 	add_action('admin_head', function () {
 		echo '<style>#preview-action { display: none }</style>';
